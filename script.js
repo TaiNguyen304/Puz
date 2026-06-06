@@ -1,9 +1,7 @@
 // --- KHỞI TẠO ĐỐI TƯỢNG ĐỒNG BỘ SUPABASE ---
-// Đọc từ cấu hình window hoặc fallback về chuỗi mặc định (đã sửa thêm https://)
 var SUPABASE_URL = window.SUPABASE_URL || "https://tukabyhjmcyptuwmwedp.supabase.co";
 var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
 
-// Bộ lọc tự động sửa lỗi nếu vô tình quên nhập https://
 if (SUPABASE_URL && !SUPABASE_URL.startsWith("http://") && !SUPABASE_URL.startsWith("https://")) {
     SUPABASE_URL = "https://" + SUPABASE_URL;
 }
@@ -29,8 +27,6 @@ const wrongSound = new Audio("wrong.mp3");
 let currentQuizIndex = 0; 
 let allCells = [];
 let absoluteCells = [];
-let tossupTimeout = null; 
-let isTossupRunning = false; 
 
 function initAudioPermission() {
     dingSound.load(); showSound.load(); revealSound.load(); clearPuzzleSound.load(); wrongSound.load();
@@ -98,7 +94,6 @@ function syncControlUI(type, data) {
     });
 }
 
-// Hàm khởi tạo và tải dữ liệu từ mảng letters nhận trực tiếp từ Excel gửi sang
 function loadQuiz(quizPayload) {
     const index = quizPayload.index;
     const letters = quizPayload.letters;
@@ -107,8 +102,6 @@ function loadQuiz(quizPayload) {
     tossupSound.load();
     initAudioPermission();
 
-    clearTimeout(tossupTimeout);
-    isTossupRunning = false;
     tossupSound.pause();
     tossupSound.currentTime = 0;
     syncControlUI("UPDATE_CTRL_ACTIVE", null);
@@ -156,28 +149,6 @@ function loadQuiz(quizPayload) {
     });
 
     syncControlUI("UPDATE_QUIZ_ACTIVE", index);
-}
-
-function revealRandomCell() {
-    if (!isTossupRunning) return;
-    const hiddenCells = allCells.filter(item => !item.revealed);
-    if (hiddenCells.length === 0) {
-        isTossupRunning = false;
-        tossupSound.pause();
-        syncControlUI("UPDATE_CTRL_ACTIVE", null);
-        return;
-    }
-    const randomIndex = Math.floor(Math.random() * hiddenCells.length);
-    const targetItem = hiddenCells[randomIndex];
-
-    targetItem.element.style.background = 'url("obox.png") center center no-repeat';
-    targetItem.element.style.backgroundSize = "100% 100%";
-    targetItem.element.textContent = removeVietnameseTones(targetItem.letter);
-    targetItem.revealed = true;
-    targetItem.state = 2;
-
-    const randomDelay = Math.random() * (1500 - 1000) + 1000;
-    tossupTimeout = setTimeout(revealRandomCell, randomDelay);
 }
 
 // --- CỔNG LẮNG NGHE TÍN HIỆU TỪ BẢNG ĐIỀU KHIỂN (SUPABASE REALTIME) ---
@@ -266,7 +237,6 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
     }
     else if (type === "START_TOSSUP") {
         initAudioPermission();
-        clearTimeout(tossupTimeout);
         syncControlUI("UPDATE_CTRL_ACTIVE", "startBtn");
 
         allCells.forEach(item => {
@@ -278,21 +248,32 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         });
         tossupSound.currentTime = 0;
         playTossupMusic();
-        isTossupRunning = true;
-        revealRandomCell();
+    }
+    // SỰ KIỆN ĐỒNG BỘ: Nhận lệnh lật ô cụ thể từ Control gửi đến
+    else if (type === "TOSSUP_REVEAL_CELL") {
+        const idx = data.absoluteIndex;
+        const targetItem = absoluteCells[idx - 1];
+        if (targetItem && !targetItem.revealed) {
+            targetItem.element.style.background = 'url("obox.png") center center no-repeat';
+            targetItem.element.style.backgroundSize = "100% 100%";
+            targetItem.element.textContent = removeVietnameseTones(targetItem.letter);
+            targetItem.revealed = true;
+            targetItem.state = 2;
+        }
     }
     else if (type === "PAUSE_TOSSUP") {
         syncControlUI("UPDATE_CTRL_ACTIVE", "pauseBtn");
-        isTossupRunning = false;
-        clearTimeout(tossupTimeout);
+        tossupSound.pause();
         playDing();
     }
     else if (type === "PLAY_TOSSUP") {
         initAudioPermission();
-        if (isTossupRunning) return;
         syncControlUI("UPDATE_CTRL_ACTIVE", "playBtn");
-        isTossupRunning = true;
-        revealRandomCell();
+        playTossupMusic();
+    }
+    else if (type === "STOP_TOSSUP_MUSIC") {
+        tossupSound.pause();
+        syncControlUI("UPDATE_CTRL_ACTIVE", null);
     }
     else if (type === "SHOW_BOARD") {
         initAudioPermission();
@@ -309,8 +290,6 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         });
     }
     else if (type === "REVEAL_ALL") {
-        clearTimeout(tossupTimeout);
-        isTossupRunning = false;
         tossupSound.pause();
         syncControlUI("UPDATE_CTRL_ACTIVE", null);
 

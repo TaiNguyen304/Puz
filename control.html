@@ -239,6 +239,12 @@
         });
         channel.subscribe();
 
+        // --- BIẾN QUẢN LÝ TRẠNG THÁI TOSS-UP TRÊN CONTROL ---
+        let tossupTimeout = null;
+        let isTossupRunning = false;
+        let controlActiveQuizLetters = []; // Lưu cấu trúc chữ cái của đề hiện tại
+        let controlRevealedStates = new Array(52).fill(false); // Lưu trạng thái lật của 52 ô
+
         // Lắng nghe dữ liệu phản hồi ngược lại từ màn hình hiển thị chính
         channel.on('broadcast', { event: 'display-to-control' }, ({ payload }) => {
             const { type, data } = payload;
@@ -272,6 +278,14 @@
                 document.getElementById("pauseBtn").classList.remove("active");
                 document.getElementById("playBtn").classList.remove("active");
                 if (data) document.getElementById(data).classList.add("active");
+
+                // Đồng bộ trạng thái chạy Toss-up dựa trên phản hồi nếu cần
+                if (data === "startBtn" || data === "playBtn") {
+                    isTossupRunning = true;
+                } else if (data === "pauseBtn" || data === null) {
+                    isTossupRunning = false;
+                    clearTimeout(tossupTimeout);
+                }
             }
 
             if (type === "FILL_POSITIONS") {
@@ -281,7 +295,7 @@
         });
 
         // --- XỬ LÝ DỮ LIỆU EXCEL ---
-        let importedQuizzes = []; // Lưu trữ mảng 12 đề, mỗi đề gồm 52 ký tự bóc từ ma trận
+        let importedQuizzes = [];
 
         function handleExcel(input) {
             const file = input.files[0];
@@ -292,7 +306,6 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 importedQuizzes = [];
 
-                // Quét qua tối đa 12 Sheet ứng với 12 đề bài
                 for (let i = 0; i < Math.min(workbook.SheetNames.length, 12); i++) {
                     const sheetName = workbook.SheetNames[i];
                     const sheet = workbook.Sheets[sheetName];
@@ -303,25 +316,20 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // Ánh xạ tọa độ từ vùng A2:N5 trong Excel (Bỏ qua A2, A5, N2, N5) thành chuỗi phẳng 52 phần tử
         function parseExcelGrid(sheet) {
             let letters = [];
-            // Hàng 2 (r=1 trong thư viện): Cột B -> M (c=1 đến 12) [Bỏ A2 và N2]
             for (let c = 1; c <= 12; c++) {
                 let cellRef = XLSX.utils.encode_cell({ r: 1, c: c });
                 letters.push(sheet[cellRef] ? String(sheet[cellRef].v) : "");
             }
-            // Hàng 3 (r=2 trong thư viện): Cột A -> N (c=0 đến 13)
             for (let c = 0; c <= 13; c++) {
                 let cellRef = XLSX.utils.encode_cell({ r: 2, c: c });
                 letters.push(sheet[cellRef] ? String(sheet[cellRef].v) : "");
             }
-            // Hàng 4 (r=3 trong thư viện): Cột A -> N (c=0 đến 13)
             for (let c = 0; c <= 13; c++) {
                 let cellRef = XLSX.utils.encode_cell({ r: 3, c: c });
                 letters.push(sheet[cellRef] ? String(sheet[cellRef].v) : "");
             }
-            // Hàng 5 (r=4 trong thư viện): Cột B -> M (c=1 đến 12) [Bỏ A5 và N5]
             for (let c = 1; c <= 12; c++) {
                 let cellRef = XLSX.utils.encode_cell({ r: 4, c: c });
                 letters.push(sheet[cellRef] ? String(sheet[cellRef].v) : "");
@@ -339,9 +347,79 @@
                 showCustomAlert(`Lỗi: Không tìm thấy dữ liệu Sheet tương ứng với Đề ${quizIndex + 1}`);
                 return;
             }
-            // Phát lệnh tải đề kèm gói dữ liệu mảng cấu trúc chữ cái 
+
+            // Lưu thông tin đề tại Control phục vụ Toss-up tính toán
+            controlActiveQuizLetters = quizLetters;
+            controlRevealedStates = new Array(52).fill(false);
+            clearTimeout(tossupTimeout);
+            isTossupRunning = false;
+
             sendCmd('LOAD_QUIZ', { index: quizIndex, letters: quizLetters });
         }
+
+        // --- LOGIC ĐIỀU KHIỂN CHỌN Ô NGẪU NHIÊN TOSS-UP ---
+        function controlRevealRandomCell() {
+            if (!isTossupRunning) return;
+
+            // Lọc ra danh sách các index ô hợp lệ (có chữ cái và chưa lật)
+            let hiddenIndices = [];
+            controlActiveQuizLetters.forEach((letter, i) => {
+                if (letter !== "" && letter !== " " && letter && !controlRevealedStates[i]) {
+                    hiddenIndices.push(i);
+                }
+            });
+
+            if (hiddenIndices.length === 0) {
+                isTossupRunning = false;
+                clearTimeout(tossupTimeout);
+                sendCmd('STOP_TOSSUP_MUSIC');
+                return;
+            }
+
+            // Control tính toán ngẫu nhiên vị trí ô cần mở
+            const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+            controlRevealedStates[randomIndex] = true;
+
+            // Gửi lệnh yêu cầu tất cả các màn hình lật chính xác ô này
+            sendCmd('TOSSUP_REVEAL_CELL', { absoluteIndex: randomIndex + 1 });
+
+            // Tính thời gian delay ngẫu nhiên kế tiếp và tiếp tục vòng lặp tại Control
+            const randomDelay = Math.random() * (1500 - 1000) + 1000;
+            tossupTimeout = setTimeout(controlRevealRandomCell, randomDelay);
+        }
+
+        // Hàm bổ trợ trigger các nút điều khiển Toss-up hệ thống
+        function clickStartTossup() {
+            if (controlActiveQuizLetters.length === 0) {
+                showCustomAlert("Lỗi: Vui lòng nạp đề bài trước khi chơi Toss-up!");
+                return;
+            }
+            clearTimeout(tossupTimeout);
+            controlRevealedStates = new Array(52).fill(false);
+            isTossupRunning = true;
+
+            sendCmd('START_TOSSUP');
+            controlRevealRandomCell();
+        }
+
+        function clickPauseTossup() {
+            isTossupRunning = false;
+            clearTimeout(tossupTimeout);
+            sendCmd('PAUSE_TOSSUP');
+        }
+
+        function clickPlayTossup() {
+            if (isTossupRunning) return;
+            isTossupRunning = true;
+            sendCmd('PLAY_TOSSUP');
+            controlRevealRandomCell();
+        }
+
+        // Thay đổi sự kiện onclick trong HTML bằng các hàm quản lý mới này
+        document.getElementById("startBtn").setAttribute("onclick", "clickStartTossup()");
+        document.getElementById("pauseBtn").setAttribute("onclick", "clickPauseTossup()");
+        document.getElementById("playBtn").setAttribute("onclick", "clickPlayTossup()");
+
 
         // --- PHẦN GIAO DIỆN HOẠT ĐỘNG CHỮ CÁI ---
         const vietnameseAlphabet = ["A", "Ă", "Â", "B", "C", "D", "Đ", "E", "Ê", "G", "H", "I", "K", "L", "M", "N", "O", "Ô", "Ơ", "P", "Q", "R", "S", "T", "U", "Ư", "V", "X", "Y"];
@@ -359,6 +437,8 @@
         });
 
         function solveTossUp() {
+            isTossupRunning = false;
+            clearTimeout(tossupTimeout);
             const audio = new Audio('ClearTossUp.mp3');
             audio.play().catch(err => console.log("Lỗi âm thanh điều khiển:", err));
             sendCmd('REVEAL_ALL');
@@ -435,23 +515,9 @@
         }
 
         document.addEventListener('keydown', function (e) {
-            // Chặn F12
-            if (e.key === 'F12') {
-                e.preventDefault();
-                return false;
-            }
-
-            // Chặn Ctrl + Shift + I (Inspect), J (Console), C (Elements)
-            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
-                e.preventDefault();
-                return false;
-            }
-
-            // Chặn Ctrl + U (View Source)
-            if (e.ctrlKey && e.key === 'U') {
-                e.preventDefault();
-                return false;
-            }
+            if (e.key === 'F12') { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.key === 'U') { e.preventDefault(); return false; }
         });
     </script>
 </body>
