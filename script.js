@@ -15,31 +15,47 @@ channel.subscribe();
 
 const board = document.getElementById("board");
 
-// Khởi tạo các đối tượng âm thanh
+// Khởi tạo các đối tượng âm thanh nền / âm thanh dài
 const showSound = new Audio("reveal.mp3");
 const revealSound = new Audio("ClearTossUp.mp3");
 const clearPuzzleSound = new Audio("ClearPuzzle.mp3");
 const tossupSound = new Audio("tossup.mp3");
 tossupSound.loop = true;
-const dingSound = new Audio("ding.wav");
-const wrongSound = new Audio("wrong.mp3");
 
 let currentQuizIndex = 0; 
 let allCells = [];
 let absoluteCells = [];
 
 function initAudioPermission() {
-    dingSound.load(); showSound.load(); revealSound.load(); clearPuzzleSound.load(); wrongSound.load();
+    showSound.load(); revealSound.load(); clearPuzzleSound.load(); tossupSound.load();
 }
 
+// HÀM PHÁT ÂM THANH Ô CHỮ BẰNG CÁCH TẠO MỚI ĐỐI TƯỢNG (Khắc phục lỗi dồn tiếng)
 function playDing(){
-    let soundClone = dingSound.cloneNode();
-    soundClone.play().catch(e => console.log(e));
+    const audio = new Audio("ding.wav");
+    audio.play().then(() => {
+        audio.onended = () => { audio.remove(); };
+    }).catch(e => console.log(e));
+}
+
+function playSecondDing(){
+    const audio = new Audio("2nd_ding.wav");
+    audio.play().then(() => {
+        audio.onended = () => { audio.remove(); };
+    }).catch(e => console.log(e));
 }
 
 function playWrong() {
-    let soundClone = wrongSound.cloneNode();
-    soundClone.play().catch(e => console.log(e));
+    const audio = new Audio("wrong.mp3");
+    audio.play().then(() => {
+        audio.onended = () => { audio.remove(); };
+    }).catch(e => console.log(e));
+}
+
+function playTimerSound(seconds) {
+    const filename = seconds === 30 ? "30s.mp3" : "10s.mp3";
+    const audio = new Audio(filename);
+    audio.play().catch(e => console.log(e));
 }
 
 function playTossupMusic() {
@@ -212,7 +228,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                     item.element.style.background = 'url("choosebox.png") center center no-repeat';
                     item.element.style.backgroundSize = "100% 100%";
                     item.state = 1;
-                    playDing();
+                    playDing(); // Kích hoạt Audio cô lập mới hoàn toàn cho ô này
                 }
             }, delay);
             delay += 1000;
@@ -230,6 +246,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                     item.element.textContent = removeVietnameseTones(item.letter).replace("_", "").toUpperCase();
                     item.revealed = true;
                     item.state = 2;
+                    playSecondDing(); // Kích hoạt Audio cô lập mới hoàn toàn cho ô này
                 }
             }, delay);
             delay += 1000;
@@ -249,7 +266,6 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         tossupSound.currentTime = 0;
         playTossupMusic();
     }
-    // SỰ KIỆN ĐỒNG BỘ: Nhận lệnh lật ô cụ thể từ Control gửi đến
     else if (type === "TOSSUP_REVEAL_CELL") {
         const idx = data.absoluteIndex;
         const targetItem = absoluteCells[idx - 1];
@@ -308,5 +324,9 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             item.revealed = true;
             item.state = 2;
         });
+    }
+    else if (type === "PLAY_TIMER") {
+        initAudioPermission();
+        playTimerSound(data);
     }
 });

@@ -76,6 +76,18 @@
             color: white;
         }
 
+        .btn-time-30 {
+            background-color: blue;
+            color: white;
+            font-weight: bold;
+        }
+
+        .btn-time-10 {
+            background-color: green;
+            color: white;
+            font-weight: bold;
+        }
+
         button:hover {
             background-color: orange !important;
             color: white !important;
@@ -217,6 +229,12 @@
                     onclick="confirmExtraLetters()">XÁC NHẬN</button>
                 <button style="background-color: blue; color: white; font-weight: bold;"
                     onclick="clearExtraLetters()">XÓA TẤT CẢ</button>
+            </div>
+            
+            <h3 style="color: #ffcc00; margin-top: 15px; border: none;">Thời gian suy nghĩ (Đề 10, 11, 12):</h3>
+            <div class="group">
+                <button class="btn-time-30" onclick="sendCmd('PLAY_TIMER', 30)">30 GIÂY</button>
+                <button class="btn-time-10" onclick="sendCmd('PLAY_TIMER', 10)">10 GIÂY</button>
             </div>
         </div>
     </div>
