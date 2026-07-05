@@ -268,6 +268,76 @@
             background: #34495e;
             color: #fff;
         }
+
+        /* Style cho bảng nhập thủ công 52 ký tự */
+        .manual-input-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .manual-input-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .manual-input-cell {
+            width: 35px;
+            height: 35px;
+            text-align: center;
+            font-size: 16px;
+            border: 1px solid #555;
+            background: #fff;
+            color: #000;
+            text-transform: uppercase;
+            border-radius: 2px;
+        }
+
+        /* Style cho bảng 52 nút điều khiển */
+        .manual-btn-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .manual-btn-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+        }
+
+        .manual-btn-cell {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            text-align: center;
+            font-size: 13px;
+            cursor: pointer;
+            background: #444;
+            color: #fff;
+            border: 1px solid #666;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .manual-btn-cell:hover {
+            background: #555;
+        }
+
+        .manual-btn-cell.stage-1 {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .manual-btn-cell.stage-2 {
+            background: #28a745;
+            color: #fff;
+        }
     </style>
 </head>
 
@@ -290,26 +360,26 @@
 
     <div
         style="margin-top: 20px; padding: 15px; border: 2px solid #5ac8fa; background: #333; border-radius: 8px; text-align: center;">
-        <h3 style="margin-top: 0; border: none; color: #5ac8fa;">BẢNG NHẬP KÝ TỰ </h3>
+        <h3 style="margin-top: 0; border: none; color: #5ac8fa;">BẢNG NHẬP KÝ TỰ (52 Ô)</h3>
 
-        <div id="manualInputContainer"
-            style="display: flex; flex-direction: column; gap: 8px; align-items: center; margin-bottom: 15px;">
+        <div id="manualInputContainer" class="manual-input-grid">
         </div>
 
         <div style="margin-bottom: 25px;">
             <button id="btnSetManualLetters"
                 style="padding: 12px 35px; background-color: green; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 15px;">
-                Set
+                Set Lên Bảng
             </button>
         </div>
 
-        <h3 style="border-top: 1px solid #444; padding-top: 15px; color: #5ac8fa;">BẢNG ĐIỀU KHIỂN</h3>
-        <p style="font-size: 13px; color: #aaa; margin-top: -5px;">* Bấm lần 1: Đánh dấu | Bấm lần 2: Mở chữ
+        <h3 style="border-top: 1px solid #444; padding-top: 15px; color: #5ac8fa;">BẢNG 52 NÚT ĐIỀU KHIỂN</h3>
+        <p style="font-size: 13px; color: #aaa; margin-top: -5px;">* Bấm lần 1: Đánh dấu (Vàng) | Bấm lần 2: Mở chữ (Xanh)
         </p>
 
-        <div id="manualButtonsContainer" style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+        <div id="manualButtonsContainer" class="manual-btn-grid">
         </div>
     </div>
+
     <h3>Vòng đoán nhanh (Toss-up)</h3>
     <div class="group">
         <button class="btn-tossup" id="startBtn" onclick="clickStartTossup()">START</button>
@@ -506,7 +576,7 @@
             <div class="group" id="extraLettersContainer">
                 <script>
                     for (let i = 0; i < 10; i++) {
-                        document.write('<input type="text" maxlength="1" class="extra-letter-input" style="width: 35px; height: 35px; text-align: center; font-size: 18px; margin: 0 3px; text-transform: uppercase; border-radius: 4px; border: 1px solid #ccc;">');
+                        document.write('<input type="text" maxlength="1" class="extra-letter-input" style="width: 35px; height: 35px; text-align: center; font-size: 18px; margin: 0 3px; text-transform: uppercase; border: 1px solid #555; background: #fff; color: #000;">');
                     }
                 </script>
             </div>
@@ -532,7 +602,7 @@
 
     <script>
         var SUPABASE_URL = "https://tukabyhjmcyptuwmwedp.supabase.co";
-        var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
+        var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.PNEzLs0S3jCvkGX0Sj1C0u5mT3aI3-9p8gqH5eJ9HA4";
 
         var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const channel = supabaseClient.channel('crossword_broadcast_room', {
@@ -891,16 +961,15 @@
             const btnArea = document.getElementById("manualButtonsContainer");
 
             let globalIdx = 0;
-            // Mảng kiểm soát vòng đời trạng thái giai đoạn của 52 ô tại Control (0: chưa mở, 1: đã đánh dấu, 2: đã lật chữ)
             let currentCellStages = new Array(52).fill(0);
 
-            // Tiến hành dựng layout chính xác theo hàng 12, 14, 14, 12
+            // Dựng bảng nhập ký tự và bảng 52 nút theo layout 12-14-14-12
             rowLayout.forEach((count) => {
                 const rowInpDiv = document.createElement("div");
-                rowInpDiv.style.cssText = "display: flex; gap: 5px; justify-content: center; width: 100%;";
+                rowInpDiv.className = "manual-input-row";
 
                 const rowBtnDiv = document.createElement("div");
-                rowBtnDiv.style.cssText = "display: flex; gap: 5px; justify-content: center; width: 100%;";
+                rowBtnDiv.className = "manual-btn-row";
 
                 for (let i = 0; i < count; i++) {
                     const cellIdx = globalIdx;
@@ -909,23 +978,22 @@
                     const input = document.createElement("input");
                     input.type = "text";
                     input.id = `manual-input-${cellIdx}`;
+                    input.className = "manual-input-cell";
                     input.maxLength = 1;
-                    input.style.cssText = "width: 35px; height: 35px; text-align: center; font-size: 16px; border: 1px solid #555; background: #fff; color: #000; text-transform: uppercase;";
                     rowInpDiv.appendChild(input);
 
                     // Dựng nút bấm điều hướng lệnh mở ô tương ứng
                     const btn = document.createElement("button");
                     btn.id = `manual-btn-${cellIdx}`;
+                    btn.className = "manual-btn-cell";
                     btn.textContent = cellIdx + 1;
-                    btn.style.cssText = "width: 38px; height: 38px; padding: 0; text-align: center; font-size: 13px; cursor: pointer; background: #444; color: #fff; border: 1px solid #666; border-radius: 4px;";
 
                     // LẮNG NGHE SỰ KIỆN CLICK ĐỂ PHÁT LỆNH ĐỒNG BỘ ĐẾN CÁC FILE CÒN LẠI
                     btn.addEventListener("click", () => {
                         if (currentCellStages[cellIdx] === 0) {
                             // GIAI ĐOẠN 1: Phát lệnh Đánh dấu đến các file hiển thị
                             currentCellStages[cellIdx] = 1;
-                            btn.style.background = "#ffc107"; // Đổi màu nút trên Control sang Vàng
-                            btn.style.color = "#000";
+                            btn.classList.add("stage-1");
 
                             channel.send({
                                 type: 'broadcast',
@@ -935,8 +1003,8 @@
                         } else if (currentCellStages[cellIdx] === 1) {
                             // GIAI ĐOẠN 2: Phát lệnh Mở chữ chính thức đến các file hiển thị
                             currentCellStages[cellIdx] = 2;
-                            btn.style.background = "#28a745"; // Đổi màu nút trên Control sang Xanh lá
-                            btn.style.color = "#fff";
+                            btn.classList.remove("stage-1");
+                            btn.classList.add("stage-2");
 
                             channel.send({
                                 type: 'broadcast',
@@ -978,8 +1046,7 @@
                         if (inp) inp.value = "";
                         const btn = document.getElementById(`manual-btn-${i}`);
                         if (btn) {
-                            btn.style.background = "#444";
-                            btn.style.color = "#fff";
+                            btn.classList.remove("stage-1", "stage-2");
                         }
                     }
                 }
@@ -993,7 +1060,7 @@
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'F12') { e.preventDefault(); return false; }
                 if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) { e.preventDefault(); return false; }
-                if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
+                if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 'S')) { e.preventDefault(); return false; }
             });
 
             const devtools = { isOpen: false };
@@ -1014,13 +1081,14 @@
                 const widthThreshold = window.outerWidth - window.innerWidth > threshold;
                 const heightThreshold = window.outerHeight - window.innerHeight > threshold;
                 if (widthThreshold || heightThreshold) {
-                    document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%;'>Không được phép mở DevTools! Vui lòng tắt DevTools và F5 lại trang.</h1>";
+                    document.body.innerHTML = "<h1>Không được phép mở DevTools! Vui lòng tắt DevTools và F5 lại trang.</h1>";
                 }
             }, 500);
         }
 
         disableDevTools();
     </script>
+
 </body>
 
 </html>
