@@ -1,5 +1,5 @@
 var SUPABASE_URL = window.SUPABASE_URL || "https://tukabyhjmcyptuwmwedp.supabase.co";
-var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
+var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.PNEzLs0S3jCvkGX0Sj1C0u5mT3aI3-9p8gqH5eJ9HA4";
 
 if (SUPABASE_URL && !SUPABASE_URL.startsWith("http://") && !SUPABASE_URL.startsWith("https://")) {
     SUPABASE_URL = "https://" + SUPABASE_URL;
@@ -114,7 +114,7 @@ function removeVietnameseTones(str) {
 const cells = [
     { x: 246, y: 140 }, { x: 366, y: 140 }, { x: 486, y: 140 }, { x: 606, y: 140 }, { x: 726, y: 140 }, { x: 846, y: 140 }, { x: 966, y: 140 }, { x: 1086, y: 140 }, { x: 1206, y: 140 }, { x: 1326, y: 140 }, { x: 1446, y: 140 }, { x: 1566, y: 140 },
     { x: 126, y: 290 }, { x: 246, y: 290 }, { x: 366, y: 290 }, { x: 486, y: 290 }, { x: 606, y: 290 }, { x: 726, y: 290 }, { x: 846, y: 290 }, { x: 966, y: 290 }, { x: 1086, y: 290 }, { x: 1206, y: 290 }, { x: 1326, y: 290 }, { x: 1446, y: 290 }, { x: 1566, y: 290 }, { x: 1686, y: 290 },
-    { x: 126, y: 440 }, { x: 246, y: 440 }, { x: 366, y: 440 }, { x: 486, y: 440 }, { x: 606, y: 440 }, { x: 726, y: 440 }, { x: 846, y: 440 }, { x: 966, y: 440 }, { x: 1086, y: 440 }, { x: 1206, y: 440 }, { x: 1326, y: 440 }, { x: 1446, y: 440 }, { x: 1566, y: 440 }, { x: 1688, y: 440 },
+    { x: 126, y: 440 }, { x: 246, y: 440 }, { x: 366, y: 440 }, { x: 486, y: 440 }, { x: 606, y: 440 }, { x: 726, y: 440 }, { x: 846, y: 440 }, { x: 966, y: 440 }, { x: 1086, y: 440 }, { x: 1206, y: 440 }, { x: 1326, y: 440 }, { x: 1446, y: 440 }, { x: 1566, y: 440 }, { x: 1686, y: 440 },
     { x: 246, y: 590 }, { x: 366, y: 590 }, { x: 486, y: 590 }, { x: 606, y: 590 }, { x: 726, y: 590 }, { x: 846, y: 590 }, { x: 966, y: 590 }, { x: 1086, y: 590 }, { x: 1206, y: 590 }, { x: 1326, y: 590 }, { x: 1446, y: 590 }, { x: 1566, y: 590 }
 ];
 
@@ -245,6 +245,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
     if (!payload) return;
     const type = payload.type;
     const data = payload.data;
+    const cmd = payload.cmd;
 
     if (type === "SYNC_SCORES") {
         for (let i = 1; i <= 3; i++) {
@@ -494,6 +495,8 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             thumbOverlay.style.display = data ? "block" : "none";
         }
     }
+
+    // CHỨC NĂNG 1: SET 52 LETTERS - Dựng bảng thủ công từ Control
     if (cmd === 'SET_52_LETTERS' && Array.isArray(data)) {
         const boardEl = document.getElementById("board");
         if (boardEl) {
@@ -507,7 +510,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                 cellDiv.id = `cell-${i}`;
                 cellDiv.style.position = "absolute";
                 cellDiv.style.left = pos.x + "px";
-                cellDiv.style.top = pos.y + "px"; // SỬA LỖI: Dùng pos.y thay vì p.y (p.y làm crash script)
+                cellDiv.style.top = pos.y + "px";
 
                 // Chống bôi đen text theo tiêu chuẩn hệ thống của bạn
                 cellDiv.style.webkitUserSelect = "none";
@@ -541,15 +544,15 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         
         if (cellTarget) {
             if (currentStage === 1) {
-                // GIAI ĐOẠN 1: Đổi hình nền ô sang nền màu vàng (yellowbox.png) để báo hiệu
+                // GIAI ĐOẠN 1: Đổi hình nền ô sang highlight để báo hiệu đánh dấu
                 cellTarget.style.backgroundImage = "url('highlight.png')";
-                cellTarget.style.backgroundSize = "100% 100__";
+                cellTarget.style.backgroundSize = "100% 100%";
                 cellTarget.style.color = "transparent"; // Vẫn giấu chữ ẩn bên trong
                 
                 if (typeof playDing === "function") playDing();
             } 
             else if (currentStage === 2) {
-                // GIAI ĐOẠN 2: Chính thức lật mở chữ -> Đổi sang nền ô trắng (whitebox.png)
+                // GIAI ĐOẠN 2: Chính thức lật mở chữ
                 cellTarget.style.backgroundImage = "url('occhu.png')";
                 cellTarget.style.backgroundSize = "100% 100%";
                 
@@ -591,7 +594,7 @@ function disableDevTools() {
     document.addEventListener('keydown', function (e) {
         if (e.key === 'F12') { e.preventDefault(); return false; }
         if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) { e.preventDefault(); return false; }
-        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
+        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 'S')) { e.preventDefault(); return false; }
     });
 
     // 3. Bẫy DevTools bằng kiểm tra định dạng Console (Hoạt động cả trên file:///)
@@ -623,4 +626,3 @@ function disableDevTools() {
 
 // Kích hoạt bảo mật
 disableDevTools();
-
