@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Player 2</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        *, body, div, p, span, button {
+            font-weight: bold !important;
+        }
+        body {
+            margin: 0; padding: 0; background: #111;
+            display: flex; flex-direction: row; height: 100vh; overflow: hidden;
+        }
+        #leftContainer {
+            width: 80%; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; overflow-y: auto;
+        }
+        #rightContainer {
+            width: 20%; background: #222; border-left: 3px solid #444;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: flex-start; gap: 20px; padding: 20px 10px; box-sizing: border-box;
+            height: 100vh; /* Kéo full chiều cao màn hình */
+        }
+        #scoreContainer {
+            display: flex; justify-content: center; gap: 15px;
+            margin: 20px auto; width: 100%;
+        }
+        .score-box {
+            width: 220px; padding: 15px 5px; font-size: 24px; text-align: center; border-radius: 8px;
+            font-family:Arial, sans-serif;
+        }
+        .score-red { background-color: #ff0000; color: #ffffff; }
+        .score-yellow { background-color: #ffff00; color: #000000; }
+        .score-blue { background-color: #0000ff; color: #ffffff; }
+        .score-black { background-color: #000000; color: #ffffff; border: 2px solid #fff; }
+
+        #board {
+            position: relative; margin-top: 20px; transform: scale(0.9); transform-origin: top center;
+            background: url("khungbang.png") center center no-repeat; background-size: 100% 100%;
+        }
+        .status-box {
+            width: 90%; padding: 20px 10px; font-size: 18px; text-align: center;
+            border-radius: 8px; background: purple; color: #fff; box-sizing: border-box;
+        }
+        .status-p1-active { background-color: #FF0000 !important; color: #ffffff !important; }
+        .status-p2-active { background-color: #FFFF00 !important; color: #000000 !important; }
+        .status-p3-active { background-color: #0000FF !important; color: #ffffff !important; }
+
+        /* Nút bấm chuông dạng hình chữ nhật */
+        #buzzerBtn {
+            width: 90%; height: 1200px; font-size: 24px; border: none; border-radius: 8px;
+            cursor: pointer; transition: all 0.2s ease; margin-top: auto; /* Đẩy nút xuống dưới cùng */
+        }
+        .buzzer-unlocked { background: #ffffff; color: #000000; }
+        .buzzer-unlocked:hover {background: orange;color: white;}
+        .buzzer-locked { background: #000000; color: #ffffff; border: 3px solid #fff; cursor: not-allowed; }
+
+        /* Nút bấm chuông dạng hình chữ nhật */
+#buzzerBtn {
+    width: 90%; height: 1200px; font-size: 24px; border: none; border-radius: 8px;
+    cursor: pointer; transition: all 0.2s ease; margin-top: auto; /* Đẩy nút xuống dưới cùng */
+}
+.buzzer-unlocked { background: #ffffff; color: #000000; }
+.buzzer-unlocked:hover { background: orange; color: white; }
+.buzzer-locked { background: #000000; color: #ffffff; border: 3px solid #fff; cursor: not-allowed; }
+
+/* --- PHẦN THÊM MỚI: GIỮ NGUYÊN MÀU KHI HOVER CHO TỪNG PLAYER --- */
+.buzzer-p1-active, .buzzer-p1-active:hover { background: #ff0000 !important; color: #ffffff !important; border: none !important; cursor: not-allowed; }
+.buzzer-p2-active, .buzzer-p2-active:hover { background: #ffff00 !important; color: #000000 !important; border: none !important; cursor: not-allowed; }
+.buzzer-p3-active, .buzzer-p3-active:hover { background: #0000ff !important; color: #ffffff !important; border: none !important; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div id="leftContainer">
+        <div id="scoreContainer">
+            <div id="scoreBox1" class="score-box score-red">0</div>
+            <div id="scoreBox2" class="score-box score-yellow">0</div>
+            <div id="scoreBox3" class="score-box score-blue">0</div>
+        </div>
+        <div id="board"></div>
+    </div>
+
+    <div id="rightContainer">
+        <div id="statusBox1" class="status-box">PLAYER 1</div>
+        <div id="statusBox2" class="status-box">PLAYER 2</div>
+        <div id="statusBox3" class="status-box">PLAYER 3</div>
+        <button id="buzzerBtn" class="buzzer-locked" disabled onclick="pressBuzzer()">CHUÔNG</button>
+    </div>
+
+    <script>
+        window.SUPABASE_URL = "https://tukabyhjmcyptuwmwedp.supabase.co";
+        window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
+        const MY_PLAYER_ID = 2;
+    </script>
+    <script src="script.js"></script>
+</body>
+</html>

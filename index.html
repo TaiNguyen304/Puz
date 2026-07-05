@@ -6,34 +6,78 @@
     <title>Màn Hình Hiển Thị Ô Chữ (Khán Giả)</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        /* Thiết lập font-weight bold và Arial cho toàn bộ trang */
+        *, body, div, p, span {
+            font-weight: bold !important;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        #scoreContainer {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px auto;
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            z-index: 10; /* Đảm bảo luôn nằm trên bảng ô chữ */
+        }
+
+        .score-box {
+            width: 220px; /* Đảm bảo chứa vừa tối đa 10 chữ số kèm dấu chấm */
+            padding: 15px 10px;
+            font-size: 32px;
+            text-align: center;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Định nghĩa các trạng thái màu sắc mặc định */
+        .score-red { background-color: #ff0000; color: #ffffff; }
+        .score-yellow { background-color: #ffff00; color: #000000; }
+        .score-blue { background-color: #0000ff; color: #ffffff; }
+        .score-black { background-color: #000000; color: #ffffff; border: 2px solid #fff; }
+
+        #board {
+            position: relative;
+            margin-top: 20px;
+            background: url("khungbang.png") center center no-repeat;
+            background-size: 100% 100%;
+            transition: background 0.3s ease;
+        }
+    </style>
 </head>
 
 <body>
 
+    <div id="scoreContainer">
+        <div id="scoreBox1" class="score-box score-red">0</div>
+        <div id="scoreBox2" class="score-box score-yellow">0</div>
+        <div id="scoreBox3" class="score-box score-blue">0</div>
+    </div>
+
     <div id="board"></div>
 
     <script>
-        // Sửa lỗi: Thêm https:// vào đầu URL
         window.SUPABASE_URL = "https://tukabyhjmcyptuwmwedp.supabase.co";
         window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
+        
         document.addEventListener('keydown', function (e) {
-            // Chặn F12
-            if (e.key === 'F12') {
-                e.preventDefault();
-                return false;
-            }
-
-            // Chặn Ctrl + Shift + I (Inspect), J (Console), C (Elements)
-            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) {
-                e.preventDefault();
-                return false;
-            }
-
-            // Chặn Ctrl + U (View Source)
-            if (e.ctrlKey && e.key === 'U') {
-                e.preventDefault();
-                return false;
-            }
+            if (e.key === 'F12') { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.key === 'U') { e.preventDefault(); return false; }
         });
     </script>
 
