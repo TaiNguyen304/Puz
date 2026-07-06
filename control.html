@@ -195,7 +195,7 @@
         <button class="btn-excel" onclick="document.getElementById('excelInput').click()">NẠP FILE EXCEL</button>
         <button class="btn-main" onclick="sendCmd('SHOW_BOARD')">SHOW Ô CHỮ</button>
         <button class="btn-reveal" onclick="sendCmd('REVEAL_ALL')">MỞ HẾT TOÀN BỘ</button>
-        <button class="btn-reset" onclick="sendCmd('RESET_BOARD')">RESET BẢNG TRỐNG</button>
+        <button class="btn-reset" onclick="sendCmd('RESET_BOARD'); sendCmd('RESET_HOST_ALPHABET', null);">RESET BẢNG TRỐNG</button>
         <input type="file" id="excelInput" accept=".xlsx, .xls" style="display:none;" onchange="handleExcel(this)">
         <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', true)">HIỆN THUMBNAIL</button>
         <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', false)">ẨN THUMBNAIL</button>
@@ -606,6 +606,7 @@
             isTossupRunning = false;
 
             sendCmd('LOAD_QUIZ', { index: quizIndex, letters: quizLetters });
+            sendCmd('RESET_HOST_ALPHABET', null);
         }
 
         function controlRevealRandomCell() {

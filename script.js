@@ -212,7 +212,7 @@ function loadQuiz(quizPayload) {
 
         cell.addEventListener("click", () => {
             // KHÔNG cho phép người chơi hoặc khán giả tự ý click mở ô chữ
-            if (typeof MY_PLAYER_ID !== 'undefined' || window.location.pathname.includes('index.html')) {
+            if (typeof MY_PLAYER_ID !== 'undefined' || window.location.pathname.includes('index.html') || window.location.pathname.toLowerCase().includes('host.html')){
                 return;
             }
 
@@ -275,6 +275,12 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             boardEl.style.background = `url("${data}") center center no-repeat`;
             boardEl.style.backgroundSize = "100% 100%";
         }
+    }
+    else if (type === 'RESET_HOST_ALPHABET') {
+        vietnameseLetters.forEach(letter => {
+            const btn = document.getElementById(`host-char-${letter}`);
+            if (btn) btn.disabled = false;
+        });
     }
     else if (type === "PLAY_SOUNDBOARD") {
         initAudioPermission();
