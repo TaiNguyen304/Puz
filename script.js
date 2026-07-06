@@ -25,7 +25,7 @@ const revealSound = new Audio("ClearTossUp.mp3");
 const clearPuzzleSound = new Audio("ClearPuzzle.mp3");
 const tossupSound = new Audio("tossup.mp3");
 tossupSound.loop = true;
-
+let currentSoundboardAudio = null;
 let currentQuizIndex = 0;
 let allCells = [];
 let absoluteCells = [];
@@ -277,19 +277,22 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         }
     }
     else if (type === "PLAY_SOUNDBOARD") {
-        // Kiểm tra xem dữ liệu gửi kèm có chứa tên file âm thanh không
-        if (data && data.soundFile) {
-            try {
-                // Khởi tạo đối tượng âm thanh với đường dẫn file nhận được
-                const audio = new Audio(data.soundFile);
+        initAudioPermission();
+        // Nếu có nhạc đang phát thì dừng lại trước khi phát bài mới
+        if (currentSoundboardAudio) {
+            currentSoundboardAudio.pause();
+            currentSoundboardAudio.currentTime = 0;
+        }
+        // Tạo đối tượng âm thanh mới dựa theo tên file truyền từ data
+        currentSoundboardAudio = new Audio(data);
+        currentSoundboardAudio.play().catch(e => console.error("Lỗi phát nhạc soundboard:", e));
 
-                // Phát âm thanh
-                audio.play().catch(error => {
-                    console.error("Không thể phát âm thanh tự động (do chính sách trình duyệt):", error);
-                });
-            } catch (e) {
-                console.error("Lỗi khi khởi tạo âm thanh từ soundboard:", e);
-            }
+    } else if (type === "STOP_SOUNDBOARD") {
+        // Dừng nhạc soundboard nếu đang phát
+        if (currentSoundboardAudio) {
+            currentSoundboardAudio.pause();
+            currentSoundboardAudio.currentTime = 0;
+            currentSoundboardAudio = null;
         }
     }
     else if (type === "LOAD_QUIZ") {
