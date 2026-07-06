@@ -1,5 +1,5 @@
 var SUPABASE_URL = window.SUPABASE_URL || "https://tukabyhjmcyptuwmwedp.supabase.co";
-var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.PNEzLs0S3jCvkGX0Sj1C0u5mT3aI3-9p8gqH5eJ9HA4";
+var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
 
 if (SUPABASE_URL && !SUPABASE_URL.startsWith("http://") && !SUPABASE_URL.startsWith("https://")) {
     SUPABASE_URL = "https://" + SUPABASE_URL;
@@ -114,7 +114,7 @@ function removeVietnameseTones(str) {
 const cells = [
     { x: 246, y: 140 }, { x: 366, y: 140 }, { x: 486, y: 140 }, { x: 606, y: 140 }, { x: 726, y: 140 }, { x: 846, y: 140 }, { x: 966, y: 140 }, { x: 1086, y: 140 }, { x: 1206, y: 140 }, { x: 1326, y: 140 }, { x: 1446, y: 140 }, { x: 1566, y: 140 },
     { x: 126, y: 290 }, { x: 246, y: 290 }, { x: 366, y: 290 }, { x: 486, y: 290 }, { x: 606, y: 290 }, { x: 726, y: 290 }, { x: 846, y: 290 }, { x: 966, y: 290 }, { x: 1086, y: 290 }, { x: 1206, y: 290 }, { x: 1326, y: 290 }, { x: 1446, y: 290 }, { x: 1566, y: 290 }, { x: 1686, y: 290 },
-    { x: 126, y: 440 }, { x: 246, y: 440 }, { x: 366, y: 440 }, { x: 486, y: 440 }, { x: 606, y: 440 }, { x: 726, y: 440 }, { x: 846, y: 440 }, { x: 966, y: 440 }, { x: 1086, y: 440 }, { x: 1206, y: 440 }, { x: 1326, y: 440 }, { x: 1446, y: 440 }, { x: 1566, y: 440 }, { x: 1686, y: 440 },
+    { x: 126, y: 440 }, { x: 246, y: 440 }, { x: 366, y: 440 }, { x: 486, y: 440 }, { x: 606, y: 440 }, { x: 726, y: 440 }, { x: 846, y: 440 }, { x: 966, y: 440 }, { x: 1086, y: 440 }, { x: 1206, y: 440 }, { x: 1326, y: 440 }, { x: 1446, y: 440 }, { x: 1566, y: 440 }, { x: 1688, y: 440 },
     { x: 246, y: 590 }, { x: 366, y: 590 }, { x: 486, y: 590 }, { x: 606, y: 590 }, { x: 726, y: 590 }, { x: 846, y: 590 }, { x: 966, y: 590 }, { x: 1086, y: 590 }, { x: 1206, y: 590 }, { x: 1326, y: 590 }, { x: 1446, y: 590 }, { x: 1566, y: 590 }
 ];
 
@@ -237,15 +237,17 @@ function loadQuiz(quizPayload) {
     syncControlUI("UPDATE_QUIZ_ACTIVE", index);
 }
 
-if (typeof window.absoluteManualCells === 'undefined') {
-    window.absoluteManualCells = new Array(52).fill("");
+function clearOldBoardElements() {
+    // Dọn sạch, giữ lại thẻ ảnh thumbnail nếu có
+    const thumbnailImg = document.getElementById("programThumbnail");
+    board.innerHTML = "";
+    if (thumbnailImg) {
+        board.appendChild(thumbnailImg);
+    }
 }
 
 channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
-    if (!payload) return;
-    const type = payload.type;
-    const data = payload.data;
-    const cmd = payload.cmd;
+    const { type, data } = payload;
 
     if (type === "SYNC_SCORES") {
         for (let i = 1; i <= 3; i++) {
@@ -276,6 +278,97 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
     }
     else if (type === "LOAD_QUIZ") {
         loadQuiz(data);
+    }
+    else if (type === "SHOW_MANUAL_TEXT") {
+        initAudioPermission();
+        tossupSound.pause();
+        tossupSound.currentTime = 0;
+        syncControlUI("UPDATE_CTRL_ACTIVE", null);
+
+        clearOldBoardElements();
+        allCells = [];
+        absoluteCells = new Array(52).fill(null);
+
+        // Tách văn bản thành các dòng dựa theo phím Enter (dấu xuống dòng)
+        const lines = data.split('\n').map(line => line.trim().toUpperCase()).filter(line => line !== "");
+        
+        // Cấu hình ma trận ô chữ theo từng hàng thực tế của Chiếc nón kỳ diệu
+        // Hàng 1: 12 ô (index 0->11), Hàng 2: 14 ô (index 12->25), Hàng 3: 14 ô (index 26->39), Hàng 4: 12 ô (index 40->51)
+        const rowConfigs = [
+            { startIdx: 0, totalCells: 12 },  // Hàng 1
+            { startIdx: 12, totalCells: 14 }, // Hàng 2
+            { startIdx: 26, totalCells: 14 }, // Hàng 3
+            { startIdx: 40, totalCells: 12 }  // Hàng 4
+        ];
+
+        // Mảng đánh dấu xem ô nào trên bảng (0-51) sẽ chứa ký tự hiển thị
+        let manualTextGrid = new Array(52).fill(null);
+
+        // Xác định hàng bắt đầu hiển thị trên bảng dựa trên số lượng dòng bạn nhập
+        // Nếu nhập 1 dòng -> Hiện ở hàng số 2 (Row index 1). Nếu nhập 2 dòng -> Hiện ở hàng 2 và hàng 3 (Row index 1 và 2)
+        let targetRowIndex = lines.length === 1 ? 1 : 1; 
+
+        lines.forEach((lineText, index) => {
+            let currentRow = targetRowIndex + index;
+            if (currentRow > 3) currentRow = 3; // Giới hạn không vượt quá hàng số 4
+
+            let config = rowConfigs[currentRow];
+            
+            // Tính toán khoảng trống thụt lề (Offset) để chữ nằm chính giữa hàng này
+            let offset = Math.floor((config.totalCells - lineText.length) / 2);
+            if (offset < 0) offset = 0; // Phòng trường hợp chữ quá dài tràn hàng
+
+            let activeStartIdx = config.startIdx + offset;
+
+            // Điền các ký tự của dòng hiện tại vào mảng lưới tọa độ
+            for (let charPos = 0; charPos < lineText.length; charPos++) {
+                let gridIndex = activeStartIdx + charPos;
+                if (gridIndex < config.startIdx + config.totalCells) {
+                    manualTextGrid[gridIndex] = lineText[charPos];
+                }
+            }
+        });
+
+        // Tiến hành vẽ toàn bộ giao diện 52 ô lên màn hình khán giả
+        cells.forEach((p, i) => {
+            const cell = document.createElement("div");
+            cell.className = "cell cell-manual"; // Giữ font chữ UTMHelvetIns chuẩn của dự án
+            cell.style.left = p.x + "px";
+            cell.style.top = p.y + "px";
+
+            const charAtPos = manualTextGrid[i];
+
+            if (charAtPos !== null) {
+                if (charAtPos === " ") {
+                    // Xử lý khoảng trắng giữa các từ trong câu thủ công
+                    cell.style.background = 'url("defaultbox.png") center center no-repeat';
+                    cell.style.backgroundSize = "100% 100%";
+                    cell.style.pointerEvents = "none";
+                } else {
+                    // Ô chứa chữ cái: Giữ nguyên vẹn dấu tiếng Việt và ký tự đặc biệt trên nền trắng occhu.png
+                    cell.style.background = 'url("occhu.png") center center no-repeat';
+                    cell.style.backgroundSize = "100% 100%";
+                    cell.textContent = charAtPos;
+                    
+                    let cellObj = { element: cell, letter: charAtPos, revealed: true, state: 2, absoluteIndex: i + 1 };
+                    allCells.push(cellObj);
+                    absoluteCells[i] = cellObj;
+                }
+            } else {
+                // Các ô trống không chứa chữ xung quanh bảng
+                cell.style.background = 'url("defaultbox.png") center center no-repeat';
+                cell.style.backgroundSize = "100% 100%";
+                cell.style.pointerEvents = "none";
+            }
+
+            board.appendChild(cell);
+        });
+
+        // Phát hiệu ứng âm thanh nạp ô chữ mượt mà
+        showSound.currentTime = 0;
+        showSound.play().catch(e => console.log(e));
+        
+        syncControlUI("UPDATE_QUIZ_ACTIVE", -1);
     }
     else if (type === "GUESS_LETTER") {
         initAudioPermission();
@@ -495,92 +588,6 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             thumbOverlay.style.display = data ? "block" : "none";
         }
     }
-
-    // CHỨC NĂNG 1: SET 52 LETTERS - Dựng bảng thủ công từ Control
-    if (cmd === 'SET_52_LETTERS' && Array.isArray(data)) {
-        const boardEl = document.getElementById("board");
-        if (boardEl) {
-            boardEl.innerHTML = ""; // Xóa sạch các ô cũ để dựng bảng thủ công
-            window.absoluteManualCells = data; // Lưu mảng ký tự vào bộ nhớ tạm
-
-            cells.forEach((pos, i) => {
-                const letter = data[i] ? data[i].trim().toUpperCase() : "";
-                const cellDiv = document.createElement("div");
-                cellDiv.className = "cell";
-                cellDiv.id = `cell-${i}`;
-                cellDiv.style.position = "absolute";
-                cellDiv.style.left = pos.x + "px";
-                cellDiv.style.top = pos.y + "px";
-
-                // Chống bôi đen text theo tiêu chuẩn hệ thống của bạn
-                cellDiv.style.webkitUserSelect = "none";
-                cellDiv.style.mozUserSelect = "none";
-                cellDiv.style.msUserSelect = "none";
-                cellDiv.style.userSelect = "none";
-
-                if (letter === "") {
-                    // Ô trống hoàn toàn không chứa chữ
-                    cellDiv.style.backgroundImage = "url('defaultbox.png')";
-                    cellDiv.style.backgroundSize = "100% 100%";
-                    cellDiv.textContent = "";
-                } else {
-                    // Ô có chữ: Hiện khung ô chữ màu xanh (obox.png) nhưng ẩn chữ bên trong
-                    cellDiv.style.backgroundImage = "url('obox.png')";
-                    cellDiv.style.backgroundSize = "100% 100%";
-                    cellDiv.style.color = "transparent"; // Giấu kín chữ
-                    cellDiv.textContent = letter;
-                }
-                boardEl.appendChild(cellDiv);
-            });
-        }
-        return;
-    }
-
-    // CHỨC NĂNG 2: XỬ LÝ LỆNH MỞ Ô CHỮ THEO 2 GIAI ĐOẠN TỪ CONTROL
-    if (cmd === 'CELL_STAGE_CONTROL' && data) {
-        const cellIdx = data.index;
-        const currentStage = data.stage;
-        const cellTarget = document.getElementById(`cell-${cellIdx}`);
-        
-        if (cellTarget) {
-            if (currentStage === 1) {
-                // GIAI ĐOẠN 1: Đổi hình nền ô sang highlight để báo hiệu đánh dấu
-                cellTarget.style.backgroundImage = "url('highlight.png')";
-                cellTarget.style.backgroundSize = "100% 100%";
-                cellTarget.style.color = "transparent"; // Vẫn giấu chữ ẩn bên trong
-                
-                if (typeof playDing === "function") playDing();
-            } 
-            else if (currentStage === 2) {
-                // GIAI ĐOẠN 2: Chính thức lật mở chữ
-                cellTarget.style.backgroundImage = "url('occhu.png')";
-                cellTarget.style.backgroundSize = "100% 100%";
-                
-                // Trích xuất ký tự ẩn đã lưu từ Giai đoạn Set ban đầu
-                let charToShow = "";
-                if (window.absoluteManualCells && window.absoluteManualCells[cellIdx]) {
-                    charToShow = window.absoluteManualCells[cellIdx];
-                } else if (cellTarget.textContent) {
-                    charToShow = cellTarget.textContent;
-                }
-                
-                // Hiển thị rõ chữ màu đen sắc nét lên bảng của các file hiển thị
-                cellTarget.textContent = charToShow.trim().toUpperCase();
-                cellTarget.style.color = "#000000";
-                
-                if (typeof playSecondDing === "function") playSecondDing();
-            }
-        }
-        return;
-    }
-
-    // CHỨC NĂNG 3: XỬ LÝ RESET BẢNG TRỐNG ĐỒNG BỘ
-    if (cmd === 'RESET_BOARD') {
-        const boardEl = document.getElementById("board");
-        if (boardEl) boardEl.innerHTML = "";
-        window.absoluteManualCells = new Array(52).fill("");
-        return;
-    }
 });
 
 updateBuzzerUI();
@@ -594,7 +601,7 @@ function disableDevTools() {
     document.addEventListener('keydown', function (e) {
         if (e.key === 'F12') { e.preventDefault(); return false; }
         if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) { e.preventDefault(); return false; }
-        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 'S')) { e.preventDefault(); return false; }
+        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
     });
 
     // 3. Bẫy DevTools bằng kiểm tra định dạng Console (Hoạt động cả trên file:///)

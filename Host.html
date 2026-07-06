@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi">
-
 <head>
     <meta charset="UTF-8">
     <title>Host</title>
@@ -8,123 +7,115 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Đảm bảo toàn bộ chữ hiển thị đậm theo phong cách hệ thống */
-        *,
-        body,
-        div,
-        p,
-        span,
-        button,
-        input {
+        *, body, div, p, span, button, input {
             font-weight: bold !important;
         }
-
         body {
-            margin: 0;
-            padding: 0;
-            background: #111;
-            display: flex;
-            flex-direction: row;
-            height: 100vh;
-            overflow: hidden;
+            margin: 0; padding: 0; background: #111;
+            display: flex; flex-direction: row; height: 100vh; overflow: hidden;
         }
-
         #leftContainer {
-            width: 80%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            overflow-y: auto;
+            width: 80%; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-start; overflow-y: auto;
         }
-
         #rightContainer {
-            width: 20%;
-            background: #222;
-            border-left: 3px solid #444;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 15px;
-            padding: 15px 10px;
-            box-sizing: border-box;
-            height: 100vh;
-            overflow-y: auto;
+            width: 20%; background: #222; border-left: 3px solid #444;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: flex-start; gap: 15px; padding: 15px 10px; box-sizing: border-box;
+            height: 100vh; overflow-y: auto;
         }
-
+        @font-face {
+            font-family: 'SF FORTUNE WHEEL';
+            src: url('SF Fortune Wheel.ttf') format('truetype');
+        }
         #scoreContainer {
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin: 20px auto;
+            /* Giữ khoảng cách gap lớn để bù trừ không gian vật lý khi scale(5) */
+            gap: 160px;
+            margin: 80px auto 90px auto;
+            max-width: 1400px;
             width: 100%;
+            position: relative;
+            z-index: 10;
         }
 
         .score-box {
-            width: 220px;
-            padding: 15px 5px;
-            font-size: 24px;
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: center;
             text-align: center;
-            border-radius: 8px;
-            font-family: Arial, sans-serif;
+            transition: all 0.3s ease;
+            font-family: 'SF FORTUNE WHEEL', Arial, sans-serif;
+
+            /* Cố định kích thước khung chữ gốc siêu nhỏ để khi scale(5) lên ảnh không bị biến dạng */
+            width: 60px;
+            /* Khi nhân 5 sẽ tương đương rộng 300px trên màn hình */
+            height: 20px;
+            /* Khi nhân 5 sẽ tương đương cao 100px trên màn hình */
+
+            /* Ép ảnh vừa khít theo tỷ lệ khung, không dùng contain tự co giãn nữa nhằm tránh bị phình bự */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+
+            /* Bỏ padding px lớn cũ để tránh làm tăng kích thước div khi chữ dài ra */
+            padding: 0 4px 2.5px 4px;
+            box-sizing: border-box;
+
+            /* Font size gốc */
+            font-size: 8px;
+            white-space: nowrap;
+            /* Không cho phép xuống dòng khi chuỗi số dài */
+
+            /* Thực hiện scale(5) giữ nguyên phông dáng */
+            transform: scale(5);
+            transform-origin: center;
+
+            /* Giảm bớt margin ngoài vì gap và width/height ở trên đã đủ căn khoảng cách */
+            margin-top: 10px;
+            margin-left: 70px;
+            margin-right: 70px;
         }
 
-        /* Cấu hình chuẩn lại màu sắc chữ và nền cho các ô điểm */
+        /* Giữ nguyên phần map ảnh nền */
         .score-red {
-            background-color: #ff0000 !important;
+            background-image: url("scorered.png") !important;
             color: #ffffff !important;
+            background-color: transparent !important;
         }
 
         .score-yellow {
-            background-color: #ffff00 !important;
-            color: #000000 !important;
+            background-image: url("scoreyellow.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
         }
 
         .score-blue {
-            background-color: #0000ff !important;
+            background-image: url("scoreblue.png") !important;
             color: #ffffff !important;
+            background-color: transparent !important;
         }
 
         .score-black {
-            background-color: #000000 !important;
+            background-image: url("scoreboard.png") !important;
             color: #ffffff !important;
-            border: 2px solid #ffffff;
+            background-color: transparent !important;
+            border: none !important;
         }
 
         #board {
-            position: relative;
-            margin-top: 20px;
-            transform: scale(0.9);
-            transform-origin: top center;
-            background: url("khungbang.png") center center no-repeat;
-            background-size: 100% 100%;
+            position: relative; margin-top: 20px; transform: scale(0.9); transform-origin: top center;
+            background: url("khungbang.png") center center no-repeat; background-size: 100% 100%;
         }
-
+        
         .status-box {
-            width: 100%;
-            padding: 12px 10px;
-            font-size: 16px;
-            text-align: center;
-            border-radius: 8px;
-            background: purple;
-            color: #fff;
-            box-sizing: border-box;
+            width: 100%; padding: 12px 10px; font-size: 16px; text-align: center;
+            border-radius: 8px; background: purple; color: #fff; box-sizing: border-box;
         }
-
-        .status-p1-active {
-            background-color: #FF0000 !important;
-            color: #ffffff !important;
-        }
-
-        .status-p2-active {
-            background-color: #FFFF00 !important;
-            color: #000000 !important;
-        }
-
-        .status-p3-active {
-            background-color: #0000FF !important;
-            color: #ffffff !important;
-        }
+        .status-p1-active { background-color: #FF0000 !important; color: #ffffff !important; }
+        .status-p2-active { background-color: #FFFF00 !important; color: #000000 !important; }
+        .status-p3-active { background-color: #0000FF !important; color: #ffffff !important; }
 
         /* Khối hiển thị thông tin điểm chi tiết 3 người chơi bên phải */
         .host-player-row {
@@ -135,31 +126,18 @@
             box-sizing: border-box;
             border: 1px solid #444;
         }
-
-        .p1-row {
-            border-left: 5px solid #ff0000;
-        }
-
-        .p2-row {
-            border-left: 5px solid #ffff00;
-        }
-
-        .p3-row {
-            border-left: 5px solid #0000ff;
-        }
+        .p1-row { border-left: 5px solid #ff0000; }
+        .p2-row { border-left: 5px solid #ffff00; }
+        .p3-row { border-left: 5px solid #0000ff; }
 
         .player-row-title {
-            font-size: 13px;
-            margin-bottom: 5px;
-            text-align: center;
+            font-size: 13px; margin-bottom: 5px; text-align: center;
         }
-
         .score-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 5px;
         }
-
         .score-sub-box {
             background: white;
             padding: 6px 2px;
@@ -167,35 +145,23 @@
             text-align: center;
             border-radius: 4px;
         }
-
-        .lbl-v {
-            color: black;
-        }
-
-        .lbl-t {
-            color: black;
-        }
+        .lbl-v { color: black; }
+        .lbl-t { color: black; }
 
         /* Bàn phím chữ cái cho Host */
         .alphabet-host-section {
             width: 100%;
             margin-top: 5px;
         }
-
         .alphabet-title {
-            font-size: 14px;
-            color: aqua;
-            margin-bottom: 8px;
-            text-align: center;
+            font-size: 14px; color: aqua; margin-bottom: 8px; text-align: center;
         }
-
         .alphabet-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 4px;
             justify-content: center;
         }
-
         .btn-letter-host {
             background-color: purple;
             color: #fff;
@@ -205,7 +171,6 @@
             border-radius: 4px;
             text-align: center;
         }
-
         .btn-letter-host:disabled {
             background-color: #444 !important;
             color: #888 !important;
@@ -223,23 +188,13 @@
             color: #fff;
             border: 1px dashed #5ac8fa;
         }
-
         .info-sync-line {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
+            display: flex; justify-content: space-between; margin-bottom: 5px;
         }
-
-        .info-sync-line:last-child {
-            margin-bottom: 0;
-        }
-
-        .val-sync {
-            color: #ffff00;
-        }
+        .info-sync-line:last-child { margin-bottom: 0; }
+        .val-sync { color: #ffff00; }
     </style>
 </head>
-
 <body>
     <div id="leftContainer">
         <div id="scoreContainer">
@@ -305,7 +260,7 @@
         // Khởi tạo giao diện bảng chữ cái Tiếng Việt cho Host
         const vietnameseLetters = ["A", "Ă", "Â", "B", "C", "D", "Đ", "E", "Ê", "G", "H", "I", "K", "L", "M", "N", "O", "Ô", "Ơ", "P", "Q", "R", "S", "T", "U", "Ư", "V", "X", "Y"];
         const alphabetContainer = document.getElementById("hostAlphabetContainer");
-
+        
         vietnameseLetters.forEach(letter => {
             const btn = document.createElement("button");
             btn.className = "btn-letter-host";
@@ -326,7 +281,7 @@
             const hostChannel = window.supabaseClient.channel('crossword_broadcast_room', {
                 config: { broadcast: { ack: false, self: false } }
             });
-
+            
             hostChannel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                 const { type, data } = payload;
                 if (type === "SYNC_SCORES" && data) {
@@ -346,49 +301,12 @@
                         document.getElementById("p3HostTotal").textContent = formatNumberWithDots(data.p3.total);
                     }
                 }
-
-                else if (type === "RESET_BOARD") {
-                    // 1. Dọn trống nội dung và mảng ký tự lưu trữ tại Host (nếu có)
-                    const boardEl = document.getElementById("board");
-                    if (boardEl) boardEl.innerHTML = "";
-                    window.absoluteManualCells = new Array(52).fill("");
-
-                    // 2. TIẾN HÀNH RESET BẢNG CHỮ CÁI PHÍA HOST VỀ TRẠNG THÁI KHỞI ĐẦU
-                    // Dựa vào vòng lặp ký tự tiếng Việt hoặc các nút chữ cái để mở khóa lại từ đầu
-                    if (typeof vietnameseLetters !== 'undefined') {
-                        vietnameseLetters.forEach(letter => {
-                            const btn = document.getElementById(`host-char-${letter}`);
-                            if (btn) {
-                                btn.disabled = false;     // Bỏ vô hiệu hóa nút bấm chữ cái
-                                btn.style.backgroundColor = ""; // Reset màu sắc nguyên bản nếu có đổi màu
-                                btn.style.color = "";
-                                btn.classList.remove("activated", "disabled", "selected");
-                            }
-                        });
-                    } else {
-                        // Trường hợp sử dụng class chung cho các nút bàn phím Alphabet
-                        const allHostKeyboards = document.querySelectorAll(".keyboard-letter, button[id^='host-char-']");
-                        allHostKeyboards.forEach(btn => {
-                            btn.disabled = false;
-                            btn.classList.remove("activated", "disabled", "selected");
-                            btn.style.opacity = "1";
-                            btn.style.pointerEvents = "auto";
-                        });
-                    }
-
-                    // Reset các thẻ hiển thị thông số đi kèm trên Host (nếu có)
-                    const syncNumCells = document.getElementById("syncNumCells");
-                    const syncPositions = document.getElementById("syncPositions");
-                    if (syncNumCells) syncNumCells.textContent = "0";
-                    if (syncPositions) syncPositions.textContent = "---";
-                }
             }).subscribe();
         }
 
-
         // BẮT CHẶN HÀM PHẢN HỒI GỐC CỦA SCRIPT.JS ĐỂ ĐỒNG BỘ HIỂN THỊ SỐ Ô VÀ VỊ TRÍ MỞ CHỮ TỨC THÌ
         const originalSyncControlUI = window.syncControlUI;
-        window.syncControlUI = function (type, data) {
+        window.syncControlUI = function(type, data) {
             if (typeof originalSyncControlUI === 'function') {
                 originalSyncControlUI(type, data);
             }
@@ -403,7 +321,7 @@
         let lastWordLength = 0;
         const boardObserver = new MutationObserver(() => {
             const cells = document.querySelectorAll("#board .cell");
-
+            
             if (cells.length !== lastWordLength) {
                 lastWordLength = cells.length;
                 vietnameseLetters.forEach(letter => {
@@ -432,8 +350,7 @@
             boardObserver.observe(boardEl, { childList: true, subtree: true, attributes: true });
         }
 
-
+        
     </script>
 </body>
-
 </html>

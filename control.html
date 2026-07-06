@@ -8,17 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Thiết lập font-weight bold và Arial cho toàn bộ control */
-        *,
-        body,
-        input,
-        button,
-        div,
-        p,
-        span {
+        *, body, input, button, div, p, span {
             font-family: Arial, sans-serif !important;
             font-weight: bold !important;
         }
-
+        
         body {
             background: #222;
             color: #fff;
@@ -50,59 +44,22 @@
             min-width: 100px;
         }
 
-        .btn-main {
-            background-color: purple;
-            color: white;
-        }
-
-        .btn-excel {
-            background-color: purple;
-            color: white;
-        }
-
-        .btn-reveal {
-            background-color: purple;
-            color: white;
-        }
-
-        .btn-reset {
-            background-color: purple;
-            color: white;
-        }
-
-        .btn-tossup {
-            background-color: yellow;
-            color: black;
-        }
-
-        .btn-solve {
-            background-color: yellow;
-            color: black;
-        }
-
-        .btn-quiz {
-            background-color: #34495e;
-            color: white;
-        }
-
-        .btn-time-30 {
-            background-color: blue;
-            color: white;
-        }
-
-        .btn-time-10 {
-            background-color: blue;
-            color: white;
-        }
+        .btn-main { background-color: purple; color: white; }
+        .btn-excel { background-color: purple; color: white; }
+        .btn-reveal { background-color: purple; color: white; }
+        .btn-reset { background-color: purple; color: white; }
+        .btn-tossup { background-color: yellow; color: black; }
+        .btn-solve { background-color: yellow; color: black; }
+        .btn-quiz { background-color: #34495e; color: white; }
+        .btn-time-30 { background-color: blue; color: white; }
+        .btn-time-10 { background-color: blue; color: white; }
 
         button:hover {
             background-color: orange !important;
             color: white !important;
         }
 
-        #alphabetSection {
-            display: block;
-        }
+        #alphabetSection { display: block; }
 
         .btn-letter {
             background-color: purple;
@@ -143,17 +100,9 @@
             width: 280px;
         }
 
-        .player-card.p1 {
-            border-color: #ff0000;
-        }
-
-        .player-card.p2 {
-            border-color: #ffff00;
-        }
-
-        .player-card.p3 {
-            border-color: #0000ff;
-        }
+        .player-card.p1 { border-color: #ff0000; }
+        .player-card.p2 { border-color: #ffff00; }
+        .player-card.p3 { border-color: #0000ff; }
 
         .player-title {
             font-size: 16px;
@@ -196,47 +145,23 @@
         }
 
         /* Set màu xám cho các nút tính toán điểm của mỗi người chơi */
-        .btn-action-p,
-        .btn-action-m,
-        .btn-action-r {
-            background-color: #8e8e93;
-            color: white;
-        }
+        .btn-action-p, .btn-action-m, .btn-action-r { background-color: #8e8e93; color: white; }
 
         /* Style nút đèn màu theo yêu cầu riêng biệt từng người chơi */
-        .btn-light-p1-color {
-            background-color: #ff0000;
-            color: #ffffff;
-        }
-
-        .btn-light-p2-color {
-            background-color: #ffff00;
-            color: #000000;
-        }
-
-        .btn-light-p3-color {
-            background-color: #0000ff;
-            color: #ffffff;
-        }
-
-        .btn-light-black {
-            background-color: #000000;
-            color: white;
-            border: 1px solid #fff;
-        }
+        .btn-light-p1-color { background-color: #ff0000; color: #ffffff; }
+        .btn-light-p2-color { background-color: #ffff00; color: #000000; }
+        .btn-light-p3-color { background-color: #0000ff; color: #ffffff; }
+        
+        .btn-light-black { background-color: #000000; color: white; border: 1px solid #fff; }
 
         /* Custom Popup CSS */
         .custom-popup-overlay {
             display: none;
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.75);
             z-index: 1000;
-            justify-content: center;
-            align-items: center;
+            justify-content: center; align-items: center;
         }
 
         .custom-popup-box {
@@ -250,94 +175,14 @@
         }
 
         .custom-popup-msg {
-            font-size: 16px;
-            margin-bottom: 20px;
-            color: #fff;
-            line-height: 1.5;
+            font-size: 16px; margin-bottom: 20px; color: #fff; line-height: 1.5;
         }
 
         .custom-popup-btn {
-            background: #5ac8fa;
-            color: #000;
-            padding: 10px 30px;
-            border-radius: 5px;
-            min-width: 80px;
+            background: #5ac8fa; color: #000; padding: 10px 30px; border-radius: 5px; min-width: 80px;
         }
 
-        .custom-popup-btn:hover {
-            background: #34495e;
-            color: #fff;
-        }
-
-        /* Style cho bảng nhập thủ công 52 ký tự */
-        .manual-input-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .manual-input-row {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-
-        .manual-input-cell {
-            width: 35px;
-            height: 35px;
-            text-align: center;
-            font-size: 16px;
-            border: 1px solid #555;
-            background: #fff;
-            color: #000;
-            text-transform: uppercase;
-            border-radius: 2px;
-        }
-
-        /* Style cho bảng 52 nút điều khiển */
-        .manual-btn-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .manual-btn-row {
-            display: flex;
-            gap: 5px;
-            justify-content: center;
-        }
-
-        .manual-btn-cell {
-            width: 38px;
-            height: 38px;
-            padding: 0;
-            text-align: center;
-            font-size: 13px;
-            cursor: pointer;
-            background: #444;
-            color: #fff;
-            border: 1px solid #666;
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .manual-btn-cell:hover {
-            background: #555;
-        }
-
-        .manual-btn-cell.stage-1 {
-            background: #ffc107;
-            color: #000;
-        }
-
-        .manual-btn-cell.stage-2 {
-            background: #28a745;
-            color: #fff;
-        }
+        .custom-popup-btn:hover { background: #34495e; color: #fff; }
     </style>
 </head>
 
@@ -351,35 +196,16 @@
         <button class="btn-main" onclick="sendCmd('SHOW_BOARD')">SHOW Ô CHỮ</button>
         <button class="btn-reveal" onclick="sendCmd('REVEAL_ALL')">MỞ HẾT TOÀN BỘ</button>
         <button class="btn-reset" onclick="sendCmd('RESET_BOARD')">RESET BẢNG TRỐNG</button>
-        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', true)">HIỆN
-            THUMBNAIL</button>
-        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', false)">ẨN
-            THUMBNAIL</button>
         <input type="file" id="excelInput" accept=".xlsx, .xls" style="display:none;" onchange="handleExcel(this)">
+        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', true)">HIỆN THUMBNAIL</button>
+        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', false)">ẨN THUMBNAIL</button>
     </div>
 
-    <div
-        style="margin-top: 20px; padding: 15px; border: 2px solid #5ac8fa; background: #333; border-radius: 8px; text-align: center;">
-        <h3 style="margin-top: 0; border: none; color: #5ac8fa;">BẢNG NHẬP KÝ TỰ (52 Ô)</h3>
-
-        <div id="manualInputContainer" class="manual-input-grid">
-        </div>
-
-        <div style="margin-bottom: 25px;">
-            <button id="btnSetManualLetters"
-                style="padding: 12px 35px; background-color: green; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 15px;">
-                Set Lên Bảng
-            </button>
-        </div>
-
-        <h3 style="border-top: 1px solid #444; padding-top: 15px; color: #5ac8fa;">BẢNG 52 NÚT ĐIỀU KHIỂN</h3>
-        <p style="font-size: 13px; color: #aaa; margin-top: -5px;">* Bấm lần 1: Đánh dấu (Vàng) | Bấm lần 2: Mở chữ (Xanh)
-        </p>
-
-        <div id="manualButtonsContainer" class="manual-btn-grid">
-        </div>
+    <h3>Nhập từ khóa</h3>
+    <div class="group" style="flex-direction: column; align-items: center;">
+        <textarea id="manualTextInput" class="input-manual" rows="3" style="height: auto; width: 350px; resize: vertical;" placeholder="DÒNG 1&#10;DÒNG 2 (BẤM ENTER)..."></textarea>
+        <button style="background-color: green; color: white; margin-top: 10px;" onclick="sendManualText()">SET</button>
     </div>
-
     <h3>Vòng đoán nhanh (Toss-up)</h3>
     <div class="group">
         <button class="btn-tossup" id="startBtn" onclick="clickStartTossup()">START</button>
@@ -390,78 +216,52 @@
 
     <h3>Hệ thống điều khiển chuông</h3>
     <div class="group">
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'OPEN')">MỞ
-            CHUÔNG</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'LOCK')">KHÓA
-            CHUÔNG</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_OPEN')">RESET
-            VÀ MỞ</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_LOCK')">RESET
-            VÀ KHÓA</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'OPEN')">MỞ CHUÔNG</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'LOCK')">KHÓA CHUÔNG</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_OPEN')">RESET VÀ MỞ</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_LOCK')">RESET VÀ KHÓA</button>
     </div>
 
     <h3>Màu viền ô chữ</h3>
     <div class="group">
-        <button style="background-color: purple; color: #fff;" onclick="changeBorderColor('khungbang.png')">MẶC
-            ĐỊNH</button>
+        <button style="background-color: purple; color: #fff;" onclick="changeBorderColor('khungbang.png')">MẶC ĐỊNH</button>
         <button style="background-color: red; color: #fff;" onclick="changeBorderColor('khungdo.png')">ĐỎ</button>
-        <button style="background-color: yellow; color: #000;"
-            onclick="changeBorderColor('khungvang.png')">VÀNG</button>
+        <button style="background-color: yellow; color: #000;" onclick="changeBorderColor('khungvang.png')">VÀNG</button>
         <button style="background-color: blue; color: #fff;" onclick="changeBorderColor('khungxanh.png')">XANH</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="changeBorderColor('khungxanhla.png')">XANH
-            LÁ</button>
-        <button style="background-color: white; color: #000;"
-            onclick="changeBorderColor('khungtrang.png')">TRẮNG</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="changeBorderColor('khungxanhla.png')">XANH LÁ</button>
+        <button style="background-color: white; color: #000;" onclick="changeBorderColor('khungtrang.png')">TRẮNG</button>
     </div>
 
     <h3>Soundboard</h3>
-    <div class="group"
-        style="background: #111; padding: 15px; border-radius: 8px; border: 1px dashed #5ac8fa; gap: 8px;">
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 1.mp3')">Nhạc nền 1</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 2.mp3')">Nhạc nền 2</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 3.mp3')">Nhạc nền 3</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 4.mp3')">Nhạc nền 4</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 5.mp3')">Nhạc nền 5</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 6.mp3')">Nhạc nền 6</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 7.mp3')">Nhạc nền 7</button>
+    <div class="group" style="background: #111; padding: 15px; border-radius: 8px; border: 1px dashed #5ac8fa; gap: 8px;">
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 1.mp3')">Nhạc nền 1</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 2.mp3')">Nhạc nền 2</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 3.mp3')">Nhạc nền 3</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 4.mp3')">Nhạc nền 4</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 5.mp3')">Nhạc nền 5</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 6.mp3')">Nhạc nền 6</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 7.mp3')">Nhạc nền 7</button>
 
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Intro.mp3')">Intro</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Phần thưởng.mp3')">Phần thưởng</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Ô Bí Mật.mp3')">Ô
-            Bí Mật</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Lượt.mp3')">Mất
-            Lượt</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Điểm.mp3')">Mất
-            Điểm</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Thêm Lượt.mp3')">Thêm Lượt</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'May Mắn.mp3')">May
-            Mắn</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhân Đôi.mp3')">Nhân Đôi</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Chia Đôi.mp3')">Chia Đôi</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Intro.mp3')">Intro</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Open.mp3')">Open</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Credit.mp3')">Credit</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Phần thưởng.mp3')">Phần thưởng</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Ô Bí Mật.mp3')">Ô Bí Mật</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Lượt.mp3')">Mất Lượt</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Điểm.mp3')">Mất Điểm</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Thêm Lượt.mp3')">Thêm Lượt</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'May Mắn.mp3')">May Mắn</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhân Đôi.mp3')">Nhân Đôi</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Chia Đôi.mp3')">Chia Đôi</button>
 
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Vòng đặc biệt.mp3')">Vòng đặc biệt</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 1.mp3')">Nhạc quay Nón 1</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 2.mp3')">Nhạc quay Nón 2</button>
-        <button style="background-color: #39ff14; color: #000;"
-            onclick="sendCmd('PLAY_SOUNDBOARD', 'Người chơi.mp3')">Người chơi</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Vòng đặc biệt.mp3')">Vòng đặc biệt</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Vòng chung kết.mp3')">Vòng chung kết</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 1.mp3')">Nhạc quay Nón 1</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 2.mp3')">Nhạc quay Nón 2</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 3.mp3')">Nhạc quay Nón 3</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Người chơi.mp3')">Người chơi</button>
 
-        <button style="background-color: #ff0000; color: #fff; min-width: 150px; margin-left: 10px;"
-            onclick="sendCmd('STOP_SOUNDBOARD')">DỪNG NHẠC</button>
+        <button style="background-color: #ff0000; color: #fff; min-width: 150px; margin-left: 10px;" onclick="sendCmd('STOP_SOUNDBOARD')">DỪNG NHẠC</button>
     </div>
 
     <h3>Chọn đề bài từ Excel (1 - 12)</h3>
@@ -481,8 +281,7 @@
                 <span>Vòng: <strong id="p1RoundTxt">0</strong></span>
                 <span>Tổng: <strong id="p1TotalTxt">0</strong></span>
             </div>
-            <input type="text" id="p1ScoreInput" class="score-input" placeholder="Nhập điểm..."
-                oninput="formatInputScore(this)">
+            <input type="text" id="p1ScoreInput" class="score-input" placeholder="Nhập điểm..." oninput="formatInputScore(this)">
             <div class="btn-grid">
                 <button class="btn-action-p" onclick="calcScore(1, 'SUM_TOTAL')">TỔNG +</button>
                 <button class="btn-action-p" onclick="calcScore(1, 'ADD_ROUND')">VÒNG +</button>
@@ -504,8 +303,7 @@
                 <span>Vòng: <strong id="p2RoundTxt">0</strong></span>
                 <span>Tổng: <strong id="p2TotalTxt">0</strong></span>
             </div>
-            <input type="text" id="p2ScoreInput" class="score-input" placeholder="Nhập điểm..."
-                oninput="formatInputScore(this)">
+            <input type="text" id="p2ScoreInput" class="score-input" placeholder="Nhập điểm..." oninput="formatInputScore(this)">
             <div class="btn-grid">
                 <button class="btn-action-p" onclick="calcScore(2, 'SUM_TOTAL')">TỔNG +</button>
                 <button class="btn-action-p" onclick="calcScore(2, 'ADD_ROUND')">VÒNG +</button>
@@ -527,8 +325,7 @@
                 <span>Vòng: <strong id="p3RoundTxt">0</strong></span>
                 <span>Tổng: <strong id="p3TotalTxt">0</strong></span>
             </div>
-            <input type="text" id="p3ScoreInput" class="score-input" placeholder="Nhập điểm..."
-                oninput="formatInputScore(this)">
+            <input type="text" id="p3ScoreInput" class="score-input" placeholder="Nhập điểm..." oninput="formatInputScore(this)">
             <div class="btn-grid">
                 <button class="btn-action-p" onclick="calcScore(3, 'SUM_TOTAL')">TỔNG +</button>
                 <button class="btn-action-p" onclick="calcScore(3, 'ADD_ROUND')">VÒNG +</button>
@@ -551,7 +348,7 @@
         <button style="background-color: red; color: #fff;" onclick="globalResetScore('ROUND')">RESET ĐIỂM VÒNG</button>
         <button style="background-color: red; color: #fff;" onclick="globalResetScore('TOTAL')">RESET ĐIỂM TỔNG</button>
     </div>
-
+    
     <div id="alphabetSection" style="display: none;">
         <h3>Bàn phím đoán chữ cái (Đề đoán chữ)</h3>
         <div class="group" id="alphabetContainer"></div>
@@ -559,8 +356,8 @@
         <div style="margin-top: 20px; text-align: center;">
             <label style="color: aqua;">SỐ Ô CẦN MỞ:</label>
             <input type="number" id="numCells"
-                style="padding: 5px; width: 60px; margin-left: 10px; text-align: center; border-radius: 4px;" min="0"
-                max="52" oninput="generateChildTextBoxes()">
+                style="padding: 5px; width: 60px; margin-left: 10px; text-align: center; border-radius: 4px;"
+                min="0" max="52" oninput="generateChildTextBoxes()">
         </div>
 
         <div id="childTextBoxes" class="group" style="margin-top: 15px;"></div>
@@ -576,15 +373,17 @@
             <div class="group" id="extraLettersContainer">
                 <script>
                     for (let i = 0; i < 10; i++) {
-                        document.write('<input type="text" maxlength="1" class="extra-letter-input" style="width: 35px; height: 35px; text-align: center; font-size: 18px; margin: 0 3px; text-transform: uppercase; border: 1px solid #555; background: #fff; color: #000;">');
+                        document.write('<input type="text" maxlength="1" class="extra-letter-input" style="width: 35px; height: 35px; text-align: center; font-size: 18px; margin: 0 3px; text-transform: uppercase; border-radius: 4px; border: 1px solid #ccc;">');
                     }
                 </script>
             </div>
             <div class="group" style="margin-top: 15px;">
-                <button style="background-color: green; color: white;" onclick="confirmExtraLetters()">XÁC NHẬN</button>
-                <button style="background-color: blue; color: white;" onclick="clearExtraLetters()">XÓA TẤT CẢ</button>
+                <button style="background-color: green; color: white;"
+                    onclick="confirmExtraLetters()">XÁC NHẬN</button>
+                <button style="background-color: blue; color: white;"
+                    onclick="clearExtraLetters()">XÓA TẤT CẢ</button>
             </div>
-
+            
             <h3 style="color: #ffcc00; margin-top: 15px; border: none;">Thời gian suy nghĩ (Đề 10, 11, 12):</h3>
             <div class="group">
                 <button class="btn-time-30" onclick="sendCmd('PLAY_TIMER', 30)">30 GIÂY</button>
@@ -602,11 +401,11 @@
 
     <script>
         var SUPABASE_URL = "https://tukabyhjmcyptuwmwedp.supabase.co";
-        var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.PNEzLs0S3jCvkGX0Sj1C0u5mT3aI3-9p8gqH5eJ9HA4";
+        var SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
 
         var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         const channel = supabaseClient.channel('crossword_broadcast_room', {
-            config: { broadcast: { ack: false, self: false } }
+            config: { broadcast: { ack: false, self: true } }
         });
         channel.subscribe((status) => {
             if (status === 'SUBSCRIBED') {
@@ -683,7 +482,7 @@
         }
 
         function formatInputScore(input) {
-            let value = input.value.replace(/\D/g, "");
+            let value = input.value.replace(/\D/g, ""); 
             if (value !== "") {
                 input.value = formatNumberWithDots(parseInt(value));
             }
@@ -955,140 +754,54 @@
             sendCmd("CHANGE_BORDER_COLOR", colorFile);
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            const rowLayout = [12, 14, 14, 12];
-            const inputArea = document.getElementById("manualInputContainer");
-            const btnArea = document.getElementById("manualButtonsContainer");
-
-            let globalIdx = 0;
-            let currentCellStages = new Array(52).fill(0);
-
-            // Dựng bảng nhập ký tự và bảng 52 nút theo layout 12-14-14-12
-            rowLayout.forEach((count) => {
-                const rowInpDiv = document.createElement("div");
-                rowInpDiv.className = "manual-input-row";
-
-                const rowBtnDiv = document.createElement("div");
-                rowBtnDiv.className = "manual-btn-row";
-
-                for (let i = 0; i < count; i++) {
-                    const cellIdx = globalIdx;
-
-                    // Dựng ô nhập ký tự thủ công
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.id = `manual-input-${cellIdx}`;
-                    input.className = "manual-input-cell";
-                    input.maxLength = 1;
-                    rowInpDiv.appendChild(input);
-
-                    // Dựng nút bấm điều hướng lệnh mở ô tương ứng
-                    const btn = document.createElement("button");
-                    btn.id = `manual-btn-${cellIdx}`;
-                    btn.className = "manual-btn-cell";
-                    btn.textContent = cellIdx + 1;
-
-                    // LẮNG NGHE SỰ KIỆN CLICK ĐỂ PHÁT LỆNH ĐỒNG BỘ ĐẾN CÁC FILE CÒN LẠI
-                    btn.addEventListener("click", () => {
-                        if (currentCellStages[cellIdx] === 0) {
-                            // GIAI ĐOẠN 1: Phát lệnh Đánh dấu đến các file hiển thị
-                            currentCellStages[cellIdx] = 1;
-                            btn.classList.add("stage-1");
-
-                            channel.send({
-                                type: 'broadcast',
-                                event: 'control-to-display',
-                                payload: { cmd: 'CELL_STAGE_CONTROL', data: { index: cellIdx, stage: 1 } }
-                            });
-                        } else if (currentCellStages[cellIdx] === 1) {
-                            // GIAI ĐOẠN 2: Phát lệnh Mở chữ chính thức đến các file hiển thị
-                            currentCellStages[cellIdx] = 2;
-                            btn.classList.remove("stage-1");
-                            btn.classList.add("stage-2");
-
-                            channel.send({
-                                type: 'broadcast',
-                                event: 'control-to-display',
-                                payload: { cmd: 'CELL_STAGE_CONTROL', data: { index: cellIdx, stage: 2 } }
-                            });
-                        }
-                    });
-
-                    rowBtnDiv.appendChild(btn);
-                    globalIdx++;
-                }
-                inputArea.appendChild(rowInpDiv);
-                btnArea.appendChild(rowBtnDiv);
-            });
-
-            // Sự kiện nút "Set Lên Bảng Ô Chữ" phát lệnh cấu trúc mảng chữ cái
-            document.getElementById("btnSetManualLetters").addEventListener("click", () => {
-                let lettersData = [];
-                for (let i = 0; i < 52; i++) {
-                    const textVal = document.getElementById(`manual-input-${i}`).value;
-                    lettersData.push(textVal ? textVal.trim().toUpperCase() : "");
-                }
-
-                // Phát lệnh SET_52_LETTERS cho các file còn lại đồng loạt dựng ô chữ ẩn
-                channel.send({
-                    type: 'broadcast',
-                    event: 'control-to-display',
-                    payload: { cmd: 'SET_52_LETTERS', data: lettersData }
-                });
-            });
-
-            // Lắng nghe sự kiện hệ thống phát từ Control để tự động reset bảng nhập dữ liệu
-            channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
-                if (payload && (payload.type === 'RESET_BOARD' || payload.cmd === 'RESET_BOARD')) {
-                    currentCellStages.fill(0);
-                    for (let i = 0; i < 52; i++) {
-                        const inp = document.getElementById(`manual-input-${i}`);
-                        if (inp) inp.value = "";
-                        const btn = document.getElementById(`manual-btn-${i}`);
-                        if (btn) {
-                            btn.classList.remove("stage-1", "stage-2");
-                        }
-                    }
-                }
-            });
-        });
-
-        // --- CHỨC NĂNG DISABLE DEVTOOLS TOÀN DIỆN (CHẠY ĐƯỢC CẢ DẠNG FILE) ---
-        function disableDevTools() {
-            document.addEventListener('contextmenu', e => e.preventDefault());
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'F12') { e.preventDefault(); return false; }
-                if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) { e.preventDefault(); return false; }
-                if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 'S')) { e.preventDefault(); return false; }
-            });
-
-            const devtools = { isOpen: false };
-            const element = new Image();
-            Object.defineProperty(element, 'id', {
-                get: function () {
-                    devtools.isOpen = true;
-                    window.location.reload();
-                }
-            });
-
-            setInterval(function () {
-                devtools.isOpen = false;
-                console.log(element);
-                console.clear();
-
-                const threshold = 160;
-                const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-                if (widthThreshold || heightThreshold) {
-                    document.body.innerHTML = "<h1>Không được phép mở DevTools! Vui lòng tắt DevTools và F5 lại trang.</h1>";
-                }
-            }, 500);
+        function sendManualText() {
+            const txt = document.getElementById("manualTextInput").value.trim().toUpperCase();
+            if (txt === "") {
+                showCustomAlert("Vui lòng nhập nội dung ô chữ!");
+                return;
+            }
+            if (txt.length > 14) {
+                showCustomAlert("Từ khóa thủ công tối đa là 14 ký tự để xếp vừa hàng 2!");
+                return;
+            }
+            sendCmd("SHOW_MANUAL_TEXT", txt);
         }
 
-        disableDevTools();
-    </script>
+        // --- CHỨC NĂNG DISABLE DEVTOOLS TOÀN DIỆN (CHẠY ĐƯỢC CẢ DẠNG FILE) ---
+function disableDevTools() {
+    document.addEventListener('contextmenu', e => e.preventDefault());
 
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'F12') { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) { e.preventDefault(); return false; }
+        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
+    });
+
+    const devtools = { isOpen: false };
+    const element = new Image();
+    Object.defineProperty(element, 'id', {
+        get: function () {
+            devtools.isOpen = true;
+            window.location.reload();
+        }
+    });
+
+    setInterval(function() {
+        devtools.isOpen = false;
+        console.log(element);
+        console.clear();
+        
+        const threshold = 160;
+        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+        if (widthThreshold || heightThreshold) {
+            document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%;'>Không được phép mở DevTools! Vui lòng tắt DevTools và F5 lại trang.</h1>";
+        }
+    }, 500);
+}
+
+disableDevTools();
+    </script>
 </body>
 
 </html>

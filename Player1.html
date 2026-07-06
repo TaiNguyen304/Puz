@@ -23,19 +23,86 @@
             justify-content: flex-start; gap: 20px; padding: 20px 10px; box-sizing: border-box;
             height: 100vh; /* Kéo full chiều cao màn hình */
         }
-        #scoreContainer {
-            display: flex; justify-content: center; gap: 15px;
-            margin: 20px auto; width: 100%;
+        @font-face {
+            font-family: 'SF FORTUNE WHEEL';
+            src: url('SF Fortune Wheel.ttf') format('truetype');
         }
-        .score-box {
-            width: 220px; padding: 15px 5px; font-size: 24px; text-align: center; border-radius: 8px;
-            font-family:Arial, sans-serif;
-        }
-        .score-red { background-color: #ff0000; color: #ffffff; }
-        .score-yellow { background-color: #ffff00; color: #000000; }
-        .score-blue { background-color: #0000ff; color: #ffffff; }
-        .score-black { background-color: #000000; color: #ffffff; border: 2px solid #fff; }
 
+        #scoreContainer {
+            display: flex;
+            justify-content: center;
+            /* Giữ khoảng cách gap lớn để bù trừ không gian vật lý khi scale(5) */
+            gap: 160px;
+            margin: 80px auto 90px auto;
+            max-width: 1400px;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .score-box {
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: center;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'SF FORTUNE WHEEL', Arial, sans-serif;
+
+            /* Cố định kích thước khung chữ gốc siêu nhỏ để khi scale(5) lên ảnh không bị biến dạng */
+            width: 60px;
+            /* Khi nhân 5 sẽ tương đương rộng 300px trên màn hình */
+            height: 20px;
+            /* Khi nhân 5 sẽ tương đương cao 100px trên màn hình */
+
+            /* Ép ảnh vừa khít theo tỷ lệ khung, không dùng contain tự co giãn nữa nhằm tránh bị phình bự */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+
+            /* Bỏ padding px lớn cũ để tránh làm tăng kích thước div khi chữ dài ra */
+            padding: 0 4px 2.5px 4px;
+            box-sizing: border-box;
+
+            /* Font size gốc */
+            font-size: 8px;
+            white-space: nowrap;
+            /* Không cho phép xuống dòng khi chuỗi số dài */
+
+            /* Thực hiện scale(5) giữ nguyên phông dáng */
+            transform: scale(5);
+            transform-origin: center;
+
+            /* Giảm bớt margin ngoài vì gap và width/height ở trên đã đủ căn khoảng cách */
+            margin-top: 10px;
+            margin-left: 70px;
+            margin-right: 70px;
+        }
+
+        /* Giữ nguyên phần map ảnh nền */
+        .score-red {
+            background-image: url("scorered.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+        }
+
+        .score-yellow {
+            background-image: url("scoreyellow.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+        }
+
+        .score-blue {
+            background-image: url("scoreblue.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+        }
+
+        .score-black {
+            background-image: url("scoreboard.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+            border: none !important;
+        }
         #board {
             position: relative; margin-top: 20px; transform: scale(0.9); transform-origin: top center;
             background: url("khungbang.png") center center no-repeat; background-size: 100% 100%;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
- 
+
 <head>
     <meta charset="UTF-8">
     <title>Màn Hình Hiển Thị Ô Chữ (Khán Giả)</title>
@@ -8,7 +8,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Thiết lập font-weight bold và Arial cho toàn bộ trang */
-        *, body, div, p, span {
+        *,
+        body,
+        div,
+        p,
+        span {
             font-weight: bold !important;
         }
 
@@ -22,33 +26,86 @@
             justify-content: flex-start;
         }
 
+        @font-face {
+            font-family: 'SF FORTUNE WHEEL';
+            src: url('SF Fortune Wheel.ttf') format('truetype');
+        }
+
         #scoreContainer {
             display: flex;
             justify-content: center;
-            gap: 40px;
-            margin: 20px auto;
-            max-width: 1200px;
+            /* Giữ khoảng cách gap lớn để bù trừ không gian vật lý khi scale(5) */
+            gap: 160px;
+            margin: 80px auto 90px auto;
+            max-width: 1400px;
             width: 100%;
             position: relative;
-            z-index: 10; /* Đảm bảo luôn nằm trên bảng ô chữ */
+            z-index: 10;
         }
 
         .score-box {
-            width: 220px; /* Đảm bảo chứa vừa tối đa 10 chữ số kèm dấu chấm */
-            padding: 15px 10px;
-            font-size: 32px;
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: center;
             text-align: center;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
             transition: all 0.3s ease;
-            font-family: Arial, sans-serif;
+            font-family: 'SF FORTUNE WHEEL', Arial, sans-serif;
+
+            /* Cố định kích thước khung chữ gốc siêu nhỏ để khi scale(5) lên ảnh không bị biến dạng */
+            width: 60px;
+            /* Khi nhân 5 sẽ tương đương rộng 300px trên màn hình */
+            height: 20px;
+            /* Khi nhân 5 sẽ tương đương cao 100px trên màn hình */
+
+            /* Ép ảnh vừa khít theo tỷ lệ khung, không dùng contain tự co giãn nữa nhằm tránh bị phình bự */
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 100% 100%;
+
+            /* Bỏ padding px lớn cũ để tránh làm tăng kích thước div khi chữ dài ra */
+            padding: 0 4px 2.5px 4px;
+            box-sizing: border-box;
+
+            /* Font size gốc */
+            font-size: 8px;
+            white-space: nowrap;
+            /* Không cho phép xuống dòng khi chuỗi số dài */
+
+            /* Thực hiện scale(5) giữ nguyên phông dáng */
+            transform: scale(5);
+            transform-origin: center;
+
+            /* Giảm bớt margin ngoài vì gap và width/height ở trên đã đủ căn khoảng cách */
+            margin-top: 10px;
+            margin-left: 70px;
+            margin-right: 70px;
         }
 
-        /* Định nghĩa các trạng thái màu sắc mặc định */
-        .score-red { background-color: #ff0000; color: #ffffff; }
-        .score-yellow { background-color: #ffff00; color: #000000; }
-        .score-blue { background-color: #0000ff; color: #ffffff; }
-        .score-black { background-color: #000000; color: #ffffff; border: 2px solid #fff; }
+        /* Giữ nguyên phần map ảnh nền */
+        .score-red {
+            background-image: url("scorered.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+        }
+
+        .score-yellow {
+            background-image: url("scoreyellow.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+        }
+
+        .score-blue {
+            background-image: url("scoreblue.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+        }
+
+        .score-black {
+            background-image: url("scoreboard.png") !important;
+            color: #ffffff !important;
+            background-color: transparent !important;
+            border: none !important;
+        }
 
         #board {
             position: relative;
@@ -73,7 +130,7 @@
     <script>
         window.SUPABASE_URL = "https://tukabyhjmcyptuwmwedp.supabase.co";
         window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
-        
+
         document.addEventListener('keydown', function (e) {
             if (e.key === 'F12') { e.preventDefault(); return false; }
             if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
