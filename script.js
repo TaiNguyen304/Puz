@@ -276,6 +276,22 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             boardEl.style.backgroundSize = "100% 100%";
         }
     }
+    else if (type === "PLAY_SOUNDBOARD") {
+        // Kiểm tra xem dữ liệu gửi kèm có chứa tên file âm thanh không
+        if (data && data.soundFile) {
+            try {
+                // Khởi tạo đối tượng âm thanh với đường dẫn file nhận được
+                const audio = new Audio(data.soundFile);
+
+                // Phát âm thanh
+                audio.play().catch(error => {
+                    console.error("Không thể phát âm thanh tự động (do chính sách trình duyệt):", error);
+                });
+            } catch (e) {
+                console.error("Lỗi khi khởi tạo âm thanh từ soundboard:", e);
+            }
+        }
+    }
     else if (type === "LOAD_QUIZ") {
         loadQuiz(data);
     }
@@ -291,7 +307,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
 
         // Tách văn bản thành các dòng dựa theo phím Enter (dấu xuống dòng)
         const lines = data.split('\n').map(line => line.trim().toUpperCase()).filter(line => line !== "");
-        
+
         // Cấu hình ma trận ô chữ theo từng hàng thực tế của Chiếc nón kỳ diệu
         // Hàng 1: 12 ô (index 0->11), Hàng 2: 14 ô (index 12->25), Hàng 3: 14 ô (index 26->39), Hàng 4: 12 ô (index 40->51)
         const rowConfigs = [
@@ -306,14 +322,14 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
 
         // Xác định hàng bắt đầu hiển thị trên bảng dựa trên số lượng dòng bạn nhập
         // Nếu nhập 1 dòng -> Hiện ở hàng số 2 (Row index 1). Nếu nhập 2 dòng -> Hiện ở hàng 2 và hàng 3 (Row index 1 và 2)
-        let targetRowIndex = lines.length === 1 ? 1 : 1; 
+        let targetRowIndex = lines.length === 1 ? 1 : 1;
 
         lines.forEach((lineText, index) => {
             let currentRow = targetRowIndex + index;
             if (currentRow > 3) currentRow = 3; // Giới hạn không vượt quá hàng số 4
 
             let config = rowConfigs[currentRow];
-            
+
             // Tính toán khoảng trống thụt lề (Offset) để chữ nằm chính giữa hàng này
             let offset = Math.floor((config.totalCells - lineText.length) / 2);
             if (offset < 0) offset = 0; // Phòng trường hợp chữ quá dài tràn hàng
@@ -349,7 +365,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                     cell.style.background = 'url("occhu.png") center center no-repeat';
                     cell.style.backgroundSize = "100% 100%";
                     cell.textContent = charAtPos;
-                    
+
                     let cellObj = { element: cell, letter: charAtPos, revealed: true, state: 2, absoluteIndex: i + 1 };
                     allCells.push(cellObj);
                     absoluteCells[i] = cellObj;
@@ -367,7 +383,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         // Phát hiệu ứng âm thanh nạp ô chữ mượt mà
         showSound.currentTime = 0;
         showSound.play().catch(e => console.log(e));
-        
+
         syncControlUI("UPDATE_QUIZ_ACTIVE", -1);
     }
     else if (type === "GUESS_LETTER") {
@@ -577,11 +593,11 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                 thumbOverlay = document.createElement("div");
                 thumbOverlay.id = "thumbnailOverlay";
                 thumbOverlay.style.cssText = "position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: none; pointer-events: none;";
-                
+
                 const img = document.createElement("img");
                 img.src = "thumbnail.png";
                 img.style.cssText = "width: 100%; height: 100%; object-fit: fill;";
-                
+
                 thumbOverlay.appendChild(img);
                 boardEl.appendChild(thumbOverlay);
             }
@@ -611,15 +627,15 @@ function disableDevTools() {
         get: function () {
             devtools.isOpen = true;
             // Hành động khi phát hiện mở DevTools: Tự động tải lại trang hoặc xóa sạch nội dung
-            window.location.reload(); 
+            window.location.reload();
         }
     });
 
-    setInterval(function() {
+    setInterval(function () {
         devtools.isOpen = false;
         console.log(element); // Kích hoạt getter nếu DevTools đang mở để đọc log
         console.clear();      // Xóa log ngay lập tức để tránh rác console
-        
+
         // Cách 2 bổ trợ: Kiểm tra chênh lệch kích thước cửa sổ hiển thị
         const threshold = 160;
         const widthThreshold = window.outerWidth - window.innerWidth > threshold;
