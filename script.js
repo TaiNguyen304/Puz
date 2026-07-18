@@ -846,13 +846,13 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         if (state === "OPEN") {
             gameState.buzzerState = "SPECIAL_PLAYER_OPEN";
             gameState.specialSelectedPlayer = playerId;
-            
+
             // RESET BUZZER STATE AND FRAME COLOR FOR SPECIAL ROUND START / RESUME
             currentBuzzedPlayer = null;
             buzzerLocked = false;
             gameState.currentBuzzedPlayer = null;
             gameState.buzzerLocked = false;
-            
+
             const boardEl = document.getElementById("board");
             if (boardEl) {
                 boardEl.style.background = `url("khungbang.png") center center no-repeat`;
@@ -1075,3 +1075,35 @@ channel.subscribe((status) => {
         }, 2000);
     }
 });
+
+// Vô hiệu hóa chuột phải
+document.addEventListener('contextmenu', (event) => {
+    event.preventDefault();
+});
+
+// Vô hiệu hóa phím F12 (mở DevTools) và các phím tắt phổ biến
+document.addEventListener('keydown', (event) => {
+    if (
+        event.key === 'F12' || // Phím F12
+        (event.ctrlKey && event.shiftKey && event.key === 'I') || // Ctrl + Shift + I
+        (event.ctrlKey && event.shiftKey && event.key === 'J') || // Ctrl + Shift + J
+        (event.ctrlKey && event.key === 'u') // Ctrl + U
+    ) {
+        event.preventDefault();
+    }
+});
+
+// Phát hiện nếu DevTools được mở
+let devtoolsOpen = false;
+const element = new Image();
+Object.defineProperty(element, 'id', {
+    get: function () {
+        devtoolsOpen = true;
+    },
+});
+setInterval(() => {
+    devtoolsOpen = false;
+    console.log(element);
+    if (devtoolsOpen) {
+    }
+}, 1000);

@@ -275,10 +275,12 @@
             font-weight: bold !important;
             border: 2px solid #00cccc !important;
         }
+
         .btn-special-round:hover {
             background-color: orange !important;
             color: white !important;
         }
+
         .special-select {
             padding: 10px;
             font-size: 14px;
@@ -338,7 +340,8 @@
     </div>
 
     <h3>Vòng đặc biệt (Luật mới)</h3>
-    <div style="color: aqua; font-size: 20px; font-weight: bold; margin-bottom: 15px;">THỜI GIAN CÒN LẠI: <span id="specialTimerDisplay">45</span> GIÂY</div>
+    <div style="color: aqua; font-size: 20px; font-weight: bold; margin-bottom: 15px;">THỜI GIAN CÒN LẠI: <span
+            id="specialTimerDisplay">45</span> GIÂY</div>
     <div class="group" style="background: #111; padding: 15px; border-radius: 8px; border: 2px dashed aqua; gap: 10px;">
         <button class="btn-special-round" onclick="specialSetTimer()">ĐẶT THỜI GIAN (45S)</button>
         <button class="btn-special-round" onclick="specialStartReveal()">MỞ CHỮ N,G,H,I,A & NGẪU NHIÊN</button>
@@ -1231,7 +1234,7 @@
                 showCustomAlert("Từ khóa thủ công tối đa là 14 ký tự để xếp vừa hàng 2!");
                 return;
             }
-            
+
             // Reconstruct the manual text grid to sync correctly
             const rowConfigs = [
                 { startIdx: 0, totalCells: 12 },
@@ -1365,7 +1368,7 @@
 
                     // Lock all buzzers
                     sendCmd('CONTROL_BUZZER_PLAYER', { playerId: null, state: "LOCK" });
-                    
+
                     // Play wrong/buzzer sound
                     sendCmd('PLAY_SOUNDBOARD', 'wrong_1.mp3');
                     sendCmd('SPECIAL_TIMER_UPDATE', { seconds: 0 });
@@ -1431,7 +1434,37 @@
             specialRevealRandomCell();
         }
 
-        // Đồng bộ ban đầu đã được xử lý bởi channel.subscribe() callback
+        // Vô hiệu hóa chuột phải
+        document.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+        });
+
+        // Vô hiệu hóa phím F12 (mở DevTools) và các phím tắt phổ biến
+        document.addEventListener('keydown', (event) => {
+            if (
+                event.key === 'F12' || // Phím F12
+                (event.ctrlKey && event.shiftKey && event.key === 'I') || // Ctrl + Shift + I
+                (event.ctrlKey && event.shiftKey && event.key === 'J') || // Ctrl + Shift + J
+                (event.ctrlKey && event.key === 'u') // Ctrl + U
+            ) {
+                event.preventDefault();
+            }
+        });
+
+        // Phát hiện nếu DevTools được mở
+        let devtoolsOpen = false;
+        const element = new Image();
+        Object.defineProperty(element, 'id', {
+            get: function () {
+                devtoolsOpen = true;
+            },
+        });
+        setInterval(() => {
+            devtoolsOpen = false;
+            console.log(element);
+            if (devtoolsOpen) {
+            }
+        }, 1000);
     </script>
 </body>
 
