@@ -1,3 +1,5 @@
+/* script.js */
+
 var SUPABASE_URL = window.SUPABASE_URL || "https://tukabyhjmcyptuwmwedp.supabase.co";
 var SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
 
@@ -5,18 +7,21 @@ if (SUPABASE_URL && !SUPABASE_URL.startsWith("http://") && !SUPABASE_URL.startsW
     SUPABASE_URL = "https://" + SUPABASE_URL;
 }
 
-// Chống bôi đen văn bản trên toàn bộ trang bằng CSS injection
+// Chống bôi đen văn bản trên toàn bộ trang
 document.body.style.webkitUserSelect = "none";
 document.body.style.mozUserSelect = "none";
 document.body.style.msUserSelect = "none";
 document.body.style.userSelect = "none";
 
-// FIX: Thay đổi self: true để người gửi cũng nhận được sự kiện broadcast của chính mình
 var supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const channel = supabaseClient.channel('crossword_broadcast_room', {
     config: { broadcast: { ack: false, self: true } }
 });
-channel.subscribe();
+
+window.crosswordCallbacks = window.crosswordCallbacks || [];
+
+let syncInterval = null;
+let hasReceivedSync = false;
 
 const board = document.getElementById("board");
 
@@ -28,16 +33,35 @@ tossupSound.loop = true;
 let currentSoundboardAudio = null;
 let currentQuizIndex = 0;
 let allCells = [];
-let absoluteCells = [];
+let absoluteCells = new Array(52).fill(null);
 
 let buzzerLocked = true;
 let currentBuzzedPlayer = null;
+
+// Biến lưu trữ trạng thái toàn cục của game để đồng bộ cho các máy khác
+let gameState = {
+    players: {
+        p1: { name: "PLAYER 1", score: 0, statusClass: "" },
+        p2: { name: "PLAYER 2", score: 0, statusClass: "" },
+        p3: { name: "PLAYER 3", score: 0, statusClass: "" }
+    },
+    currentQuiz: null,         // Đề thi đang chạy { index, letters, isManual, manualData }
+    revealedPositions: [],    // Các vị trí ô chữ đã mở (1-based index)
+    solvedRows: [],           // Các hàng đã giải
+    buzzerState: "LOCKED",    // Trạng thái chuông hiện tại (LOCKED / OPEN_NORMAL / SPECIAL_PLAYER_OPEN)
+    specialSelectedPlayer: null,
+    specialTimerValue: 45,
+    guessedLetters: [],
+    currentBuzzedPlayer: null,
+    buzzerLocked: true
+};
 
 function initAudioPermission() {
     showSound.load(); revealSound.load(); clearPuzzleSound.load(); tossupSound.load();
 }
 
 function formatNumberWithDots(num) {
+    if (num === undefined || num === null) return "0";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
@@ -70,7 +94,21 @@ function playWrong() {
 }
 
 function playTimerSound(seconds) {
-    const filename = seconds === 30 ? "30s.mp3" : "10s.mp3";
+    let sec = seconds;
+    let isSpecial = false;
+
+    if (typeof seconds === 'object' && seconds !== null) {
+        sec = seconds.seconds;
+        isSpecial = seconds.isSpecial;
+    }
+
+    let filename = "";
+    if (isSpecial) {
+        filename = sec === 30 ? "30s_vđb_2005.mp3" : "think.mp3";
+    } else {
+        filename = sec === 30 ? "30s.mp3" : "10s.mp3";
+    }
+
     const audio = new Audio(filename);
     audio.play().catch(e => console.log(e));
 }
@@ -118,6 +156,13 @@ const cells = [
     { x: 246, y: 590 }, { x: 366, y: 590 }, { x: 486, y: 590 }, { x: 606, y: 590 }, { x: 726, y: 590 }, { x: 846, y: 590 }, { x: 966, y: 590 }, { x: 1086, y: 590 }, { x: 1206, y: 590 }, { x: 1326, y: 590 }, { x: 1446, y: 590 }, { x: 1566, y: 590 }
 ];
 
+function getRowFromIndex(i) {
+    if (i < 12) return 0;
+    if (i < 26) return 1;
+    if (i < 40) return 2;
+    return 3;
+}
+
 function syncControlUI(type, data) {
     channel.send({
         type: 'broadcast',
@@ -127,6 +172,19 @@ function syncControlUI(type, data) {
 }
 
 function pressBuzzer() {
+    // Nếu trong Vòng đặc biệt và Player này bấm chuông
+    if (gameState.buzzerState === "SPECIAL_PLAYER_OPEN") {
+        if (typeof MY_PLAYER_ID !== 'undefined' && MY_PLAYER_ID === gameState.specialSelectedPlayer && currentBuzzedPlayer === null) {
+            channel.send({
+                type: 'broadcast',
+                event: 'control-to-display',
+                payload: { type: 'PLAYER_BUZZ_REQUEST', data: MY_PLAYER_ID }
+            });
+            syncControlUI("PLAYER_BUZZ_REQUEST", MY_PLAYER_ID);
+        }
+        return;
+    }
+
     if (typeof MY_PLAYER_ID === 'undefined' || buzzerLocked || currentBuzzedPlayer !== null) return;
 
     channel.send({
@@ -134,6 +192,7 @@ function pressBuzzer() {
         event: 'control-to-display',
         payload: { type: 'PLAYER_BUZZ_REQUEST', data: MY_PLAYER_ID }
     });
+    syncControlUI("PLAYER_BUZZ_REQUEST", MY_PLAYER_ID);
 }
 
 function updateBuzzerUI() {
@@ -162,14 +221,27 @@ function updateBuzzerUI() {
             targetBox.classList.add(`status-p${currentBuzzedPlayer}-active`);
         }
     } else {
-        if (btn) {
-            btn.disabled = buzzerLocked;
-            btn.className = buzzerLocked ? "buzzer-locked" : "buzzer-unlocked";
+        if (gameState.buzzerState === "SPECIAL_PLAYER_OPEN") {
+            if (btn) {
+                if (typeof MY_PLAYER_ID !== 'undefined' && MY_PLAYER_ID === gameState.specialSelectedPlayer) {
+                    btn.disabled = false;
+                    btn.className = "buzzer-unlocked";
+                } else {
+                    btn.disabled = true;
+                    btn.className = "buzzer-locked";
+                }
+            }
+        } else {
+            if (btn) {
+                btn.disabled = buzzerLocked;
+                btn.className = buzzerLocked ? "buzzer-locked" : "buzzer-unlocked";
+            }
         }
     }
 }
 
 function loadQuiz(quizPayload) {
+    if (!quizPayload) return;
     const index = quizPayload.index;
     const letters = quizPayload.letters;
 
@@ -181,7 +253,9 @@ function loadQuiz(quizPayload) {
     tossupSound.currentTime = 0;
     syncControlUI("UPDATE_CTRL_ACTIVE", null);
 
-    board.innerHTML = "";
+    if (board) {
+        board.innerHTML = "";
+    }
     allCells = [];
     absoluteCells = new Array(52).fill(null);
 
@@ -191,8 +265,9 @@ function loadQuiz(quizPayload) {
         cell.className = "cell";
         cell.style.left = p.x + "px";
         cell.style.top = p.y + "px";
+        cell.setAttribute('data-pos', i + 1);
+        cell.setAttribute('data-row', getRowFromIndex(i));
 
-        // Chống bôi đen text trên từng ô chữ
         cell.style.webkitUserSelect = "none";
         cell.style.mozUserSelect = "none";
         cell.style.msUserSelect = "none";
@@ -202,7 +277,7 @@ function loadQuiz(quizPayload) {
             cell.style.background = 'url("defaultbox.png") center center no-repeat';
             cell.style.backgroundSize = "100% 100%";
             cell.style.pointerEvents = "none";
-            board.appendChild(cell);
+            if (board) board.appendChild(cell);
             return;
         }
 
@@ -211,8 +286,7 @@ function loadQuiz(quizPayload) {
         absoluteCells[i] = cellObj;
 
         cell.addEventListener("click", () => {
-            // KHÔNG cho phép người chơi hoặc khán giả tự ý click mở ô chữ
-            if (typeof MY_PLAYER_ID !== 'undefined' || window.location.pathname.includes('index.html') || window.location.pathname.toLowerCase().includes('host.html')){
+            if (typeof MY_PLAYER_ID !== 'undefined' || window.location.pathname.includes('index.html') || window.location.pathname.toLowerCase().includes('host.html')) {
                 return;
             }
 
@@ -231,43 +305,162 @@ function loadQuiz(quizPayload) {
             }
         });
 
-        board.appendChild(cell);
+        if (board) board.appendChild(cell);
     });
 
     syncControlUI("UPDATE_QUIZ_ACTIVE", index);
 }
 
+window.loadQuiz = loadQuiz;
+window.renderBoard = loadQuiz;
+
+function rebuildManualBoard(manualData) {
+    clearOldBoardElements();
+    allCells = [];
+    absoluteCells = new Array(52).fill(null);
+
+    const lines = manualData.split('\n').map(line => line.trim().toUpperCase()).filter(line => line !== "");
+    const rowConfigs = [
+        { startIdx: 0, totalCells: 12 },
+        { startIdx: 12, totalCells: 14 },
+        { startIdx: 26, totalCells: 14 },
+        { startIdx: 40, totalCells: 12 }
+    ];
+
+    let manualTextGrid = new Array(52).fill(null);
+    let targetRowIndex = 1;
+
+    lines.forEach((lineText, index) => {
+        let currentRow = targetRowIndex + index;
+        if (currentRow > 3) currentRow = 3;
+
+        let config = rowConfigs[currentRow];
+        let offset = Math.floor((config.totalCells - lineText.length) / 2);
+        if (offset < 0) offset = 0;
+
+        let activeStartIdx = config.startIdx + offset;
+        for (let charPos = 0; charPos < lineText.length; charPos++) {
+            let gridIndex = activeStartIdx + charPos;
+            if (gridIndex < config.startIdx + config.totalCells) {
+                manualTextGrid[gridIndex] = lineText[charPos];
+            }
+        }
+    });
+
+    cells.forEach((p, i) => {
+        const cell = document.createElement("div");
+        cell.className = "cell cell-manual";
+        cell.style.left = p.x + "px";
+        cell.style.top = p.y + "px";
+        cell.setAttribute('data-pos', i + 1);
+        cell.setAttribute('data-row', getRowFromIndex(i));
+        cell.style.webkitUserSelect = "none";
+        cell.style.mozUserSelect = "none";
+        cell.style.msUserSelect = "none";
+        cell.style.userSelect = "none";
+
+        const charAtPos = manualTextGrid[i];
+        if (charAtPos !== null) {
+            if (charAtPos === " ") {
+                cell.style.background = 'url("defaultbox.png") center center no-repeat';
+                cell.style.backgroundSize = "100% 100%";
+                cell.style.pointerEvents = "none";
+            } else {
+                cell.style.background = 'url("occhu.png") center center no-repeat';
+                cell.style.backgroundSize = "100% 100%";
+                cell.textContent = charAtPos;
+
+                let cellObj = { element: cell, letter: charAtPos, revealed: true, state: 2, absoluteIndex: i + 1 };
+                allCells.push(cellObj);
+                absoluteCells[i] = cellObj;
+            }
+        } else {
+            cell.style.background = 'url("defaultbox.png") center center no-repeat';
+            cell.style.backgroundSize = "100% 100%";
+            cell.style.pointerEvents = "none";
+        }
+        if (board) board.appendChild(cell);
+    });
+}
+
 function clearOldBoardElements() {
-    // Dọn sạch, giữ lại thẻ ảnh thumbnail nếu có
     const thumbnailImg = document.getElementById("programThumbnail");
-    board.innerHTML = "";
-    if (thumbnailImg) {
-        board.appendChild(thumbnailImg);
+    if (board) {
+        board.innerHTML = "";
+        if (thumbnailImg) {
+            board.appendChild(thumbnailImg);
+        }
     }
 }
 
 channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
     const { type, data } = payload;
 
-    if (type === "SYNC_SCORES") {
-        for (let i = 1; i <= 3; i++) {
-            let key = 'p' + i;
-            let player = data[key];
-            let boxEl = document.getElementById(`scoreBox${i}`);
-            if (!boxEl) continue;
+    if (type === "SYNC_SCORES" && data) {
+        const { scoresData, scoreVisible } = data;
 
-            let currentVal = (player.mode === 'ROUND') ? player.round : player.total;
-            boxEl.textContent = formatNumberWithDots(currentVal);
-
-            boxEl.className = "score-box";
-            if (player.light === 'BLACK') {
-                boxEl.classList.add("score-black");
+        const container = document.getElementById('scoreContainer');
+        if (container) {
+            if (scoreVisible === false) {
+                container.classList.add('score-hidden');
             } else {
-                if (i === 1) boxEl.classList.add("score-red");
-                if (i === 2) boxEl.classList.add("score-yellow");
-                if (i === 3) boxEl.classList.add("score-blue");
+                container.classList.remove('score-hidden');
             }
         }
+
+        if (!scoresData) return;
+
+        // Store globally in gameState for robust syncing on refresh/late entry
+        gameState.scoresData = scoresData;
+        gameState.isScoreVisible = scoreVisible;
+
+        gameState.players.p1.name = scoresData.p1.name || "PLAYER 1";
+        gameState.players.p1.score = (scoresData.p1.mode === 'ROUND') ? scoresData.p1.round : scoresData.p1.total;
+        gameState.players.p1.statusClass = document.getElementById("statusBox1")?.className || "";
+
+        gameState.players.p2.name = scoresData.p2.name || "PLAYER 2";
+        gameState.players.p2.score = (scoresData.p2.mode === 'ROUND') ? scoresData.p2.round : scoresData.p2.total;
+        gameState.players.p2.statusClass = document.getElementById("statusBox2")?.className || "";
+
+        gameState.players.p3.name = scoresData.p3.name || "PLAYER 3";
+        gameState.players.p3.score = (scoresData.p3.mode === 'ROUND') ? scoresData.p3.round : scoresData.p3.total;
+        gameState.players.p3.statusClass = document.getElementById("statusBox3")?.className || "";
+
+        const playerMapping = [
+            { boxId: 'scoreBox1', player: scoresData.p1, defaultColor: 'score-red', nameId: 'p1NameLabel', scoreId: 'p1ScoreVal', statusBoxId: 'statusBox1' },
+            { boxId: 'scoreBox2', player: scoresData.p2, defaultColor: 'score-yellow', nameId: 'p2NameLabel', scoreId: 'p2ScoreVal', statusBoxId: 'statusBox2' },
+            { boxId: 'scoreBox3', player: scoresData.p3, defaultColor: 'score-blue', nameId: 'p3NameLabel', scoreId: 'p3ScoreVal', statusBoxId: 'statusBox3' }
+        ];
+
+        playerMapping.forEach((item) => {
+            const box = document.getElementById(item.boxId);
+            const player = item.player;
+            if (!player) return;
+
+            const nameLabel = document.getElementById(item.nameId);
+            if (nameLabel) {
+                nameLabel.textContent = player.name || "PLAYER";
+            }
+
+            let scoreVal = (player.mode === 'ROUND') ? player.round : player.total;
+            const scoreLabel = document.getElementById(item.scoreId);
+            if (scoreLabel) {
+                scoreLabel.textContent = formatNumberWithDots(scoreVal);
+            }
+
+            const statusBox = document.getElementById(item.statusBoxId);
+            if (statusBox) {
+                statusBox.textContent = player.name || `PLAYER ${item.boxId.charAt(item.boxId.length - 1)}`;
+            }
+
+            if (box) {
+                if (player.light === 'BLACK') {
+                    box.className = 'score-box score-black';
+                } else {
+                    box.className = `score-box ${item.defaultColor}`;
+                }
+            }
+        });
     }
     else if (type === "CHANGE_BORDER_COLOR") {
         const boardEl = document.getElementById("board");
@@ -276,25 +469,16 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             boardEl.style.backgroundSize = "100% 100%";
         }
     }
-    else if (type === 'RESET_HOST_ALPHABET') {
-        vietnameseLetters.forEach(letter => {
-            const btn = document.getElementById(`host-char-${letter}`);
-            if (btn) btn.disabled = false;
-        });
-    }
     else if (type === "PLAY_SOUNDBOARD") {
         initAudioPermission();
-        // Nếu có nhạc đang phát thì dừng lại trước khi phát bài mới
         if (currentSoundboardAudio) {
             currentSoundboardAudio.pause();
             currentSoundboardAudio.currentTime = 0;
         }
-        // Tạo đối tượng âm thanh mới dựa theo tên file truyền từ data
         currentSoundboardAudio = new Audio(data);
         currentSoundboardAudio.play().catch(e => console.error("Lỗi phát nhạc soundboard:", e));
-
-    } else if (type === "STOP_SOUNDBOARD") {
-        // Dừng nhạc soundboard nếu đang phát
+    }
+    else if (type === "STOP_SOUNDBOARD") {
         if (currentSoundboardAudio) {
             currentSoundboardAudio.pause();
             currentSoundboardAudio.currentTime = 0;
@@ -303,6 +487,10 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
     }
     else if (type === "LOAD_QUIZ") {
         loadQuiz(data);
+        gameState.currentQuiz = data;
+        gameState.revealedPositions = [];
+        gameState.solvedRows = [];
+        gameState.guessedLetters = [];
     }
     else if (type === "SHOW_MANUAL_TEXT") {
         initAudioPermission();
@@ -314,38 +502,26 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         allCells = [];
         absoluteCells = new Array(52).fill(null);
 
-        // Tách văn bản thành các dòng dựa theo phím Enter (dấu xuống dòng)
         const lines = data.split('\n').map(line => line.trim().toUpperCase()).filter(line => line !== "");
-
-        // Cấu hình ma trận ô chữ theo từng hàng thực tế của Chiếc nón kỳ diệu
-        // Hàng 1: 12 ô (index 0->11), Hàng 2: 14 ô (index 12->25), Hàng 3: 14 ô (index 26->39), Hàng 4: 12 ô (index 40->51)
         const rowConfigs = [
-            { startIdx: 0, totalCells: 12 },  // Hàng 1
-            { startIdx: 12, totalCells: 14 }, // Hàng 2
-            { startIdx: 26, totalCells: 14 }, // Hàng 3
-            { startIdx: 40, totalCells: 12 }  // Hàng 4
+            { startIdx: 0, totalCells: 12 },
+            { startIdx: 12, totalCells: 14 },
+            { startIdx: 26, totalCells: 14 },
+            { startIdx: 40, totalCells: 12 }
         ];
 
-        // Mảng đánh dấu xem ô nào trên bảng (0-51) sẽ chứa ký tự hiển thị
         let manualTextGrid = new Array(52).fill(null);
-
-        // Xác định hàng bắt đầu hiển thị trên bảng dựa trên số lượng dòng bạn nhập
-        // Nếu nhập 1 dòng -> Hiện ở hàng số 2 (Row index 1). Nếu nhập 2 dòng -> Hiện ở hàng 2 và hàng 3 (Row index 1 và 2)
-        let targetRowIndex = lines.length === 1 ? 1 : 1;
+        let targetRowIndex = 1;
 
         lines.forEach((lineText, index) => {
             let currentRow = targetRowIndex + index;
-            if (currentRow > 3) currentRow = 3; // Giới hạn không vượt quá hàng số 4
+            if (currentRow > 3) currentRow = 3;
 
             let config = rowConfigs[currentRow];
-
-            // Tính toán khoảng trống thụt lề (Offset) để chữ nằm chính giữa hàng này
             let offset = Math.floor((config.totalCells - lineText.length) / 2);
-            if (offset < 0) offset = 0; // Phòng trường hợp chữ quá dài tràn hàng
+            if (offset < 0) offset = 0;
 
             let activeStartIdx = config.startIdx + offset;
-
-            // Điền các ký tự của dòng hiện tại vào mảng lưới tọa độ
             for (let charPos = 0; charPos < lineText.length; charPos++) {
                 let gridIndex = activeStartIdx + charPos;
                 if (gridIndex < config.startIdx + config.totalCells) {
@@ -354,23 +530,21 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             }
         });
 
-        // Tiến hành vẽ toàn bộ giao diện 52 ô lên màn hình khán giả
         cells.forEach((p, i) => {
             const cell = document.createElement("div");
-            cell.className = "cell cell-manual"; // Giữ font chữ UTMHelvetIns chuẩn của dự án
+            cell.className = "cell cell-manual";
             cell.style.left = p.x + "px";
             cell.style.top = p.y + "px";
+            cell.setAttribute('data-pos', i + 1);
+            cell.setAttribute('data-row', getRowFromIndex(i));
 
             const charAtPos = manualTextGrid[i];
-
             if (charAtPos !== null) {
                 if (charAtPos === " ") {
-                    // Xử lý khoảng trắng giữa các từ trong câu thủ công
                     cell.style.background = 'url("defaultbox.png") center center no-repeat';
                     cell.style.backgroundSize = "100% 100%";
                     cell.style.pointerEvents = "none";
                 } else {
-                    // Ô chứa chữ cái: Giữ nguyên vẹn dấu tiếng Việt và ký tự đặc biệt trên nền trắng occhu.png
                     cell.style.background = 'url("occhu.png") center center no-repeat';
                     cell.style.backgroundSize = "100% 100%";
                     cell.textContent = charAtPos;
@@ -380,25 +554,34 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                     absoluteCells[i] = cellObj;
                 }
             } else {
-                // Các ô trống không chứa chữ xung quanh bảng
                 cell.style.background = 'url("defaultbox.png") center center no-repeat';
                 cell.style.backgroundSize = "100% 100%";
                 cell.style.pointerEvents = "none";
             }
-
-            board.appendChild(cell);
+            if (board) board.appendChild(cell);
         });
 
-        // Phát hiệu ứng âm thanh nạp ô chữ mượt mà
         showSound.currentTime = 0;
         showSound.play().catch(e => console.log(e));
 
         syncControlUI("UPDATE_QUIZ_ACTIVE", -1);
+
+        gameState.currentQuiz = { index: -1, letters: manualTextGrid, isManual: true, manualData: data };
+        gameState.revealedPositions = [];
+        gameState.solvedRows = [];
+        gameState.guessedLetters = [];
     }
     else if (type === "GUESS_LETTER") {
         initAudioPermission();
         const guessedChar = data.toUpperCase();
         let matchPositions = [];
+
+        if (!gameState.guessedLetters) {
+            gameState.guessedLetters = [];
+        }
+        if (!gameState.guessedLetters.includes(guessedChar)) {
+            gameState.guessedLetters.push(guessedChar);
+        }
 
         absoluteCells.forEach(item => {
             if (item && cleanLetter(item.letter) === guessedChar && item.state === 0) {
@@ -415,6 +598,15 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         initAudioPermission();
         const guessedChars = data.map(c => removeVietnameseTones(c).toUpperCase());
         let matchPositions = [];
+
+        if (!gameState.guessedLetters) {
+            gameState.guessedLetters = [];
+        }
+        guessedChars.forEach(guessedChar => {
+            if (!gameState.guessedLetters.includes(guessedChar)) {
+                gameState.guessedLetters.push(guessedChar);
+            }
+        });
 
         absoluteCells.forEach(item => {
             if (item && item.state === 0 && guessedChars.includes(cleanLetter(item.letter))) {
@@ -438,6 +630,8 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             item.revealed = false;
             item.state = 0;
         });
+        gameState.revealedPositions = [];
+        gameState.guessedLetters = [];
     }
     else if (type === "MARK_SEQ") {
         initAudioPermission();
@@ -468,6 +662,10 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                     item.revealed = true;
                     item.state = 2;
                     playSecondDing();
+
+                    if (!gameState.revealedPositions.includes(pos)) {
+                        gameState.revealedPositions.push(pos);
+                    }
                 }
             }, delay);
             delay += 1000;
@@ -486,6 +684,8 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         });
         tossupSound.currentTime = 0;
         playTossupMusic();
+        gameState.revealedPositions = [];
+        gameState.guessedLetters = [];
     }
     else if (type === "TOSSUP_REVEAL_CELL") {
         const idx = data.absoluteIndex;
@@ -496,6 +696,10 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             targetItem.element.textContent = removeVietnameseTones(targetItem.letter);
             targetItem.revealed = true;
             targetItem.state = 2;
+
+            if (!gameState.revealedPositions.includes(idx)) {
+                gameState.revealedPositions.push(idx);
+            }
         }
     }
     else if (type === "PAUSE_TOSSUP") {
@@ -525,6 +729,7 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                 item.state = 0;
             }, index * 10);
         });
+        gameState.revealedPositions = [];
     }
     else if (type === "REVEAL_ALL") {
         tossupSound.pause();
@@ -545,20 +750,32 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             item.revealed = true;
             item.state = 2;
         });
+
+        absoluteCells.forEach((item, idx) => {
+            if (item && !gameState.revealedPositions.includes(idx + 1)) {
+                gameState.revealedPositions.push(idx + 1);
+            }
+        });
     }
     else if (type === "PLAY_TIMER") {
         initAudioPermission();
         playTimerSound(data);
     }
-
     else if (type === "CONTROL_BUZZER") {
         if (data === "OPEN") {
             buzzerLocked = false;
+            gameState.buzzerState = "OPEN_NORMAL";
+            gameState.buzzerLocked = false;
         } else if (data === "LOCK") {
             buzzerLocked = true;
+            gameState.buzzerState = "LOCKED";
+            gameState.buzzerLocked = true;
         } else if (data === "RESET_OPEN" || data === "RESET_LOCK") {
             buzzerLocked = (data === "RESET_LOCK");
             currentBuzzedPlayer = null;
+            gameState.buzzerState = buzzerLocked ? "LOCKED" : "OPEN_NORMAL";
+            gameState.currentBuzzedPlayer = null;
+            gameState.buzzerLocked = buzzerLocked;
 
             const boardEl = document.getElementById("board");
             if (boardEl) {
@@ -572,6 +789,9 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
         if (currentBuzzedPlayer === null) {
             currentBuzzedPlayer = data;
             buzzerLocked = true;
+            gameState.buzzerState = "LOCKED";
+            gameState.currentBuzzedPlayer = data;
+            gameState.buzzerLocked = true;
 
             const boardEl = document.getElementById("board");
             let borderFile = "khungbang.png";
@@ -613,48 +833,245 @@ channel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
             thumbOverlay.style.display = data ? "block" : "none";
         }
     }
+    // --- VÒNG ĐẶC BIỆT EVENTS ---
+    else if (type === "SPECIAL_TIMER_UPDATE") {
+        const timerDisplay = document.getElementById("specialTimerDisplay");
+        if (timerDisplay) {
+            timerDisplay.textContent = data.seconds;
+        }
+        gameState.specialTimerValue = data.seconds;
+    }
+    else if (type === "CONTROL_BUZZER_PLAYER") {
+        const { playerId, state } = data;
+        if (state === "OPEN") {
+            gameState.buzzerState = "SPECIAL_PLAYER_OPEN";
+            gameState.specialSelectedPlayer = playerId;
+            
+            // RESET BUZZER STATE AND FRAME COLOR FOR SPECIAL ROUND START / RESUME
+            currentBuzzedPlayer = null;
+            buzzerLocked = false;
+            gameState.currentBuzzedPlayer = null;
+            gameState.buzzerLocked = false;
+            
+            const boardEl = document.getElementById("board");
+            if (boardEl) {
+                boardEl.style.background = `url("khungbang.png") center center no-repeat`;
+                boardEl.style.backgroundSize = "100% 100%";
+            }
+        } else {
+            gameState.buzzerState = "LOCKED";
+            gameState.specialSelectedPlayer = null;
+            buzzerLocked = true;
+            gameState.currentBuzzedPlayer = null;
+            gameState.buzzerLocked = true;
+        }
+        updateBuzzerUI();
+    }
+    else if (type === "SPECIAL_REVEAL_MULTIPLE") {
+        initAudioPermission();
+        data.positions.forEach(pos => {
+            let item = absoluteCells[pos - 1];
+            if (item && item.state !== 2) {
+                item.element.style.background = 'url("occhu.png") center center no-repeat';
+                item.element.style.backgroundSize = "100% 100%";
+                item.element.textContent = removeVietnameseTones(item.letter).replace("_", "").toUpperCase();
+                item.revealed = true;
+                item.state = 2;
+                if (!gameState.revealedPositions.includes(pos)) {
+                    gameState.revealedPositions.push(pos);
+                }
+            }
+        });
+        playDing();
+    }
+    else if (type === "SPECIAL_REVEAL_CELL") {
+        initAudioPermission();
+        const idx = data.absoluteIndex;
+        const targetItem = absoluteCells[idx - 1];
+        if (targetItem && !targetItem.revealed) {
+            targetItem.element.style.background = 'url("occhu.png") center center no-repeat';
+            targetItem.element.style.backgroundSize = "100% 100%";
+            targetItem.element.textContent = removeVietnameseTones(targetItem.letter).replace("_", "").toUpperCase();
+            targetItem.revealed = true;
+            targetItem.state = 2;
+
+            if (!gameState.revealedPositions.includes(idx)) {
+                gameState.revealedPositions.push(idx);
+            }
+            playDing();
+        }
+    }
 });
 
 updateBuzzerUI();
 
-// --- CHỨC NĂNG DISABLE DEVTOOLS TOÀN DIỆN (CHẠY ĐƯỢC CẢ DẠNG FILE) ---
-function disableDevTools() {
-    // 1. Chặn chuột phải
-    document.addEventListener('contextmenu', e => e.preventDefault());
-
-    // 2. Chặn các phím tắt mở DevTools
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'F12') { e.preventDefault(); return false; }
-        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) { e.preventDefault(); return false; }
-        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
-    });
-
-    // 3. Bẫy DevTools bằng kiểm tra định dạng Console (Hoạt động cả trên file:///)
-    const devtools = { isOpen: false };
-    const element = new Image();
-    Object.defineProperty(element, 'id', {
-        get: function () {
-            devtools.isOpen = true;
-            // Hành động khi phát hiện mở DevTools: Tự động tải lại trang hoặc xóa sạch nội dung
-            window.location.reload();
+// Gửi tín hiệu yêu cầu đồng bộ trạng thái khi tải trang/F5
+function requestSyncState() {
+    console.log("Đang gửi tín hiệu yêu cầu đồng bộ từ thiết bị...");
+    channel.send({
+        type: 'broadcast',
+        event: 'crossword_event',
+        payload: {
+            type: 'REQUEST_SYNC_STATE'
         }
     });
-
-    setInterval(function () {
-        devtools.isOpen = false;
-        console.log(element); // Kích hoạt getter nếu DevTools đang mở để đọc log
-        console.clear();      // Xóa log ngay lập tức để tránh rác console
-
-        // Cách 2 bổ trợ: Kiểm tra chênh lệch kích thước cửa sổ hiển thị
-        const threshold = 160;
-        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-        if (widthThreshold || heightThreshold) {
-            // Nếu DevTools đang mở làm thay đổi kích thước màn hình
-            document.body.innerHTML = "<h1>Không được phép mở DevTools! Vui lòng tắt DevTools và F5 lại trang.</h1>";
-        }
-    }, 500);
 }
 
-// Kích hoạt bảo mật
-disableDevTools();
+// Lắng nghe tín hiệu đồng bộ toàn bộ trạng thái giữa các trang
+channel.on('broadcast', { event: 'crossword_event' }, ({ payload }) => {
+    if (!payload) return;
+
+    if (payload.type === 'REQUEST_SYNC_STATE') {
+        const hasValidState = gameState && gameState.currentQuiz && gameState.currentQuiz.letters;
+        if (hasValidState) {
+            console.log("Thiết bị phản hồi REQUEST_SYNC_STATE với gameState hiện tại...");
+            channel.send({
+                type: 'broadcast',
+                event: 'crossword_event',
+                payload: { type: 'FULL_STATE_UPDATE', data: gameState }
+            });
+        }
+    }
+
+    else if (payload.type === 'FULL_STATE_UPDATE') {
+        const state = payload.data;
+        if (!state) return;
+        console.log("Nhận được dữ liệu trạng thái đồng bộ P2P:", state);
+
+        hasReceivedSync = true;
+        if (syncInterval) {
+            clearInterval(syncInterval);
+            syncInterval = null;
+        }
+
+        gameState = state;
+
+        currentBuzzedPlayer = state.currentBuzzedPlayer !== undefined ? state.currentBuzzedPlayer : null;
+        buzzerLocked = state.buzzerLocked !== undefined ? state.buzzerLocked : true;
+
+        const boardEl = document.getElementById("board");
+        if (boardEl) {
+            let borderFile = "khungbang.png";
+            if (currentBuzzedPlayer === 1) borderFile = "khungdo.png";
+            else if (currentBuzzedPlayer === 2) borderFile = "khungvang.png";
+            else if (currentBuzzedPlayer === 3) borderFile = "khungxanh.png";
+            boardEl.style.background = `url("${borderFile}") center center no-repeat`;
+            boardEl.style.backgroundSize = "100% 100%";
+        }
+
+        // 1. Cập nhật Điểm số & Tên người chơi & Đèn hiển thị
+        const scoreContainer = document.getElementById('scoreContainer');
+        if (scoreContainer) {
+            if (state.isScoreVisible === false) {
+                scoreContainer.classList.add('score-hidden');
+            } else {
+                scoreContainer.classList.remove('score-hidden');
+            }
+        }
+
+        const scoreMapping = [
+            { boxId: 'scoreBox1', defaultColor: 'score-red' },
+            { boxId: 'scoreBox2', defaultColor: 'score-yellow' },
+            { boxId: 'scoreBox3', defaultColor: 'score-blue' }
+        ];
+
+        for (let i = 1; i <= 3; i++) {
+            const nameLabel = document.getElementById(`p${i}NameLabel`);
+            const scoreVal = document.getElementById(`p${i}ScoreVal`);
+            const statusBox = document.getElementById(`statusBox${i}`);
+
+            if (nameLabel && state.players[`p${i}`]) {
+                nameLabel.textContent = state.players[`p${i}`].name;
+            }
+            if (scoreVal && state.players[`p${i}`]) {
+                let sVal = state.players[`p${i}`].score;
+                scoreVal.textContent = formatNumberWithDots(sVal);
+            }
+            if (statusBox && state.players[`p${i}`]) {
+                statusBox.textContent = state.players[`p${i}`].name;
+                statusBox.className = "status-box " + state.players[`p${i}`].statusClass;
+            }
+
+            // Sync score box background
+            const box = document.getElementById(`scoreBox${i}`);
+            if (box && state.scoresData && state.scoresData[`p${i}`]) {
+                const playerState = state.scoresData[`p${i}`];
+                const defaultColor = scoreMapping[i - 1].defaultColor;
+                if (playerState.light === 'BLACK') {
+                    box.className = 'score-box score-black';
+                } else {
+                    box.className = `score-box ${defaultColor}`;
+                }
+            }
+        }
+
+        // 2. Cập nhật bảng ô chữ
+        if (state.currentQuiz) {
+            if (state.currentQuiz.isManual && state.currentQuiz.manualData) {
+                rebuildManualBoard(state.currentQuiz.manualData);
+            } else {
+                loadQuiz(state.currentQuiz);
+            }
+
+            // Lật tất cả các ô chữ đã được lật trước đó
+            if (state.revealedPositions && Array.isArray(state.revealedPositions)) {
+                state.revealedPositions.forEach(pos => {
+                    const item = absoluteCells[pos - 1];
+                    if (item) {
+                        item.element.style.background = 'url("occhu.png") center center no-repeat';
+                        item.element.style.backgroundSize = "100% 100%";
+                        item.element.textContent = removeVietnameseTones(item.letter).replace("_", "").toUpperCase();
+                        item.revealed = true;
+                        item.state = 2;
+                    }
+                });
+            }
+
+            // Đồng bộ các hàng đã giải
+            if (state.solvedRows && Array.isArray(state.solvedRows)) {
+                state.solvedRows.forEach(rowIdx => {
+                    const rowCells = document.querySelectorAll(`.cell[data-row="${rowIdx}"]`);
+                    rowCells.forEach(cell => {
+                        cell.classList.add('row-solved');
+                    });
+                });
+            }
+        }
+
+        // 3. Đồng bộ timer
+        const timerDisplay = document.getElementById("specialTimerDisplay");
+        if (timerDisplay && state.specialTimerValue !== undefined) {
+            timerDisplay.textContent = state.specialTimerValue;
+        }
+
+        // 4. Đồng bộ chuông
+        updateBuzzerUI();
+
+        // 5. Chạy các callback bổ sung (đối với host.html, display.html, player.html...)
+        if (window.crosswordCallbacks && Array.isArray(window.crosswordCallbacks)) {
+            window.crosswordCallbacks.forEach(cb => {
+                try {
+                    cb(state);
+                } catch (e) {
+                    console.error("Lỗi chạy crosswordCallback:", e);
+                }
+            });
+        }
+    }
+});
+
+channel.subscribe((status) => {
+    if (status === 'SUBSCRIBED') {
+        console.log("Supabase Channel Subscribed! Starting sync polling...");
+        requestSyncState();
+        if (syncInterval) clearInterval(syncInterval);
+        syncInterval = setInterval(() => {
+            if (!hasReceivedSync && (!gameState || !gameState.currentQuiz || !gameState.currentQuiz.letters)) {
+                requestSyncState();
+            } else {
+                clearInterval(syncInterval);
+                syncInterval = null;
+            }
+        }, 2000);
+    }
+});

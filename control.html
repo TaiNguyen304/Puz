@@ -8,11 +8,17 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         /* Thiết lập font-weight bold và Arial cho toàn bộ control */
-        *, body, input, button, div, p, span {
+        *,
+        body,
+        input,
+        button,
+        div,
+        p,
+        span {
             font-family: Arial, sans-serif !important;
             font-weight: bold !important;
         }
-        
+
         body {
             background: #222;
             color: #fff;
@@ -44,22 +50,59 @@
             min-width: 100px;
         }
 
-        .btn-main { background-color: purple; color: white; }
-        .btn-excel { background-color: purple; color: white; }
-        .btn-reveal { background-color: purple; color: white; }
-        .btn-reset { background-color: purple; color: white; }
-        .btn-tossup { background-color: yellow; color: black; }
-        .btn-solve { background-color: yellow; color: black; }
-        .btn-quiz { background-color: #34495e; color: white; }
-        .btn-time-30 { background-color: blue; color: white; }
-        .btn-time-10 { background-color: blue; color: white; }
+        .btn-main {
+            background-color: purple;
+            color: white;
+        }
+
+        .btn-excel {
+            background-color: purple;
+            color: white;
+        }
+
+        .btn-reveal {
+            background-color: purple;
+            color: white;
+        }
+
+        .btn-reset {
+            background-color: purple;
+            color: white;
+        }
+
+        .btn-tossup {
+            background-color: yellow;
+            color: black;
+        }
+
+        .btn-solve {
+            background-color: yellow;
+            color: black;
+        }
+
+        .btn-quiz {
+            background-color: #34495e;
+            color: white;
+        }
+
+        .btn-time-30 {
+            background-color: blue;
+            color: white;
+        }
+
+        .btn-time-10 {
+            background-color: blue;
+            color: white;
+        }
 
         button:hover {
             background-color: orange !important;
             color: white !important;
         }
 
-        #alphabetSection { display: block; }
+        #alphabetSection {
+            display: block;
+        }
 
         .btn-letter {
             background-color: purple;
@@ -100,9 +143,17 @@
             width: 280px;
         }
 
-        .player-card.p1 { border-color: #ff0000; }
-        .player-card.p2 { border-color: #ffff00; }
-        .player-card.p3 { border-color: #0000ff; }
+        .player-card.p1 {
+            border-color: #ff0000;
+        }
+
+        .player-card.p2 {
+            border-color: #ffff00;
+        }
+
+        .player-card.p3 {
+            border-color: #0000ff;
+        }
 
         .player-title {
             font-size: 16px;
@@ -145,23 +196,47 @@
         }
 
         /* Set màu xám cho các nút tính toán điểm của mỗi người chơi */
-        .btn-action-p, .btn-action-m, .btn-action-r { background-color: #8e8e93; color: white; }
+        .btn-action-p,
+        .btn-action-m,
+        .btn-action-r {
+            background-color: #646464;
+            color: white;
+        }
 
         /* Style nút đèn màu theo yêu cầu riêng biệt từng người chơi */
-        .btn-light-p1-color { background-color: #ff0000; color: #ffffff; }
-        .btn-light-p2-color { background-color: #ffff00; color: #000000; }
-        .btn-light-p3-color { background-color: #0000ff; color: #ffffff; }
-        
-        .btn-light-black { background-color: #000000; color: white; border: 1px solid #fff; }
+        .btn-light-p1-color {
+            background-color: #ff0000;
+            color: #ffffff;
+        }
+
+        .btn-light-p2-color {
+            background-color: #ffff00;
+            color: #000000;
+        }
+
+        .btn-light-p3-color {
+            background-color: #0000ff;
+            color: #ffffff;
+        }
+
+        .btn-light-black {
+            background-color: #000000;
+            color: white;
+            border: 1px solid #fff;
+        }
 
         /* Custom Popup CSS */
         .custom-popup-overlay {
             display: none;
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: rgba(0, 0, 0, 0.75);
             z-index: 1000;
-            justify-content: center; align-items: center;
+            justify-content: center;
+            align-items: center;
         }
 
         .custom-popup-box {
@@ -175,14 +250,45 @@
         }
 
         .custom-popup-msg {
-            font-size: 16px; margin-bottom: 20px; color: #fff; line-height: 1.5;
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #fff;
+            line-height: 1.5;
         }
 
         .custom-popup-btn {
-            background: #5ac8fa; color: #000; padding: 10px 30px; border-radius: 5px; min-width: 80px;
+            background: #5ac8fa;
+            color: #000;
+            padding: 10px 30px;
+            border-radius: 5px;
+            min-width: 80px;
         }
 
-        .custom-popup-btn:hover { background: #34495e; color: #fff; }
+        .custom-popup-btn:hover {
+            background: orange;
+            color: #fff;
+        }
+
+        .btn-special-round {
+            background-color: aqua !important;
+            color: #000000 !important;
+            font-weight: bold !important;
+            border: 2px solid #00cccc !important;
+        }
+        .btn-special-round:hover {
+            background-color: orange !important;
+            color: white !important;
+        }
+        .special-select {
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 4px;
+            border: 2px solid aqua;
+            background-color: #222;
+            color: #fff;
+            margin-left: 10px;
+        }
     </style>
 </head>
 
@@ -195,15 +301,20 @@
         <button class="btn-excel" onclick="document.getElementById('excelInput').click()">NẠP FILE EXCEL</button>
         <button class="btn-main" onclick="sendCmd('SHOW_BOARD')">SHOW Ô CHỮ</button>
         <button class="btn-reveal" onclick="sendCmd('REVEAL_ALL')">MỞ HẾT TOÀN BỘ</button>
-        <button class="btn-reset" onclick="sendCmd('RESET_BOARD'); sendCmd('RESET_HOST_ALPHABET', null);">RESET BẢNG TRỐNG</button>
+        <button class="btn-reset" onclick="sendCmd('RESET_BOARD'); sendCmd('RESET_HOST_ALPHABET', null);">RESET BẢNG
+            TRỐNG</button>
         <input type="file" id="excelInput" accept=".xlsx, .xls" style="display:none;" onchange="handleExcel(this)">
-        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', true)">HIỆN THUMBNAIL</button>
-        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', false)">ẨN THUMBNAIL</button>
+        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', true)">HIỆN
+            THUMBNAIL</button>
+        <button style="background-color: purple; color: white;" onclick="sendCmd('TOGGLE_THUMBNAIL', false)">ẨN
+            THUMBNAIL</button>
     </div>
 
     <h3>Nhập từ khóa</h3>
     <div class="group" style="flex-direction: column; align-items: center;">
-        <textarea id="manualTextInput" class="input-manual" rows="3" style="height: auto; width: 350px; resize: vertical;" placeholder="DÒNG 1&#10;DÒNG 2 (BẤM ENTER)..."></textarea>
+        <textarea id="manualTextInput" class="input-manual" rows="3"
+            style="height: auto; width: 350px; resize: vertical;"
+            placeholder="DÒNG 1&#10;DÒNG 2 (BẤM ENTER)..."></textarea>
         <button style="background-color: green; color: white; margin-top: 10px;" onclick="sendManualText()">SET</button>
     </div>
     <h3>Vòng đoán nhanh (Toss-up)</h3>
@@ -216,58 +327,159 @@
 
     <h3>Hệ thống điều khiển chuông</h3>
     <div class="group">
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'OPEN')">MỞ CHUÔNG</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'LOCK')">KHÓA CHUÔNG</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_OPEN')">RESET VÀ MỞ</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_LOCK')">RESET VÀ KHÓA</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'OPEN')">MỞ
+            CHUÔNG</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'LOCK')">KHÓA
+            CHUÔNG</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_OPEN')">RESET
+            VÀ MỞ</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('CONTROL_BUZZER', 'RESET_LOCK')">RESET
+            VÀ KHÓA</button>
     </div>
 
+    <h3>Vòng đặc biệt (Luật mới)</h3>
+    <div style="color: aqua; font-size: 20px; font-weight: bold; margin-bottom: 15px;">THỜI GIAN CÒN LẠI: <span id="specialTimerDisplay">45</span> GIÂY</div>
+    <div class="group" style="background: #111; padding: 15px; border-radius: 8px; border: 2px dashed aqua; gap: 10px;">
+        <button class="btn-special-round" onclick="specialSetTimer()">ĐẶT THỜI GIAN (45S)</button>
+        <button class="btn-special-round" onclick="specialStartReveal()">MỞ CHỮ N,G,H,I,A & NGẪU NHIÊN</button>
+        <button class="btn-special-round" onclick="specialPause()">DỪNG ĐOÁN NHANH</button>
+        <button class="btn-special-round" onclick="specialResume()">TIẾP TỤC ĐOÁN NHANH</button>
+    </div>
+
+    <div class="group" style="margin-top: 10px; align-items: center;">
+        <label style="color: aqua; font-size: 16px;">CHỌN PLAYER ĐƯỢC MỞ CHUÔNG:</label>
+        <select id="specialPlayerSelect" class="special-select" onchange="specialSelectPlayer(this.value)">
+            <option value="">-- Chọn Player --</option>
+            <option value="1">Player 1</option>
+            <option value="2">Player 2</option>
+            <option value="3">Player 3</option>
+        </select>
+    </div>
     <h3>Màu viền ô chữ</h3>
     <div class="group">
-        <button style="background-color: purple; color: #fff;" onclick="changeBorderColor('khungbang.png')">MẶC ĐỊNH</button>
+        <button style="background-color: purple; color: #fff;" onclick="changeBorderColor('khungbang.png')">MẶC
+            ĐỊNH</button>
         <button style="background-color: red; color: #fff;" onclick="changeBorderColor('khungdo.png')">ĐỎ</button>
-        <button style="background-color: yellow; color: #000;" onclick="changeBorderColor('khungvang.png')">VÀNG</button>
+        <button style="background-color: yellow; color: #000;"
+            onclick="changeBorderColor('khungvang.png')">VÀNG</button>
         <button style="background-color: blue; color: #fff;" onclick="changeBorderColor('khungxanh.png')">XANH</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="changeBorderColor('khungxanhla.png')">XANH LÁ</button>
-        <button style="background-color: white; color: #000;" onclick="changeBorderColor('khungtrang.png')">TRẮNG</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="changeBorderColor('khungxanhla.png')">XANH
+            LÁ</button>
+        <button style="background-color: white; color: #000;"
+            onclick="changeBorderColor('khungtrang.png')">TRẮNG</button>
     </div>
 
-    <h3>Soundboard</h3>
-    <div class="group" style="background: #111; padding: 15px; border-radius: 8px; border: 1px dashed #5ac8fa; gap: 8px;">
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 1.mp3')">Nhạc nền 1</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 2.mp3')">Nhạc nền 2</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 3.mp3')">Nhạc nền 3</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 4.mp3')">Nhạc nền 4</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 5.mp3')">Nhạc nền 5</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 6.mp3')">Nhạc nền 6</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 7.mp3')">Nhạc nền 7</button>
+    <h3>Soundboard(2012)</h3>
+    <div class="group"
+        style="background: #111; padding: 15px; border-radius: 8px; border: 1px dashed #5ac8fa; gap: 8px;">
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 1.mp3')">Nhạc nền 1</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 2.mp3')">Nhạc nền 2</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 3.mp3')">Nhạc nền 3</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 4.mp3')">Nhạc nền 4</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 5.mp3')">Nhạc nền 5</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 6.mp3')">Nhạc nền 6</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc nền 7.mp3')">Nhạc nền 7</button>
 
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Intro.mp3')">Intro</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Open.mp3')">Open</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Credit.mp3')">Credit</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Phần thưởng.mp3')">Phần thưởng</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Ô Bí Mật.mp3')">Ô Bí Mật</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Lượt.mp3')">Mất Lượt</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Điểm.mp3')">Mất Điểm</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Thêm Lượt.mp3')">Thêm Lượt</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'May Mắn.mp3')">May Mắn</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhân Đôi.mp3')">Nhân Đôi</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Chia Đôi.mp3')">Chia Đôi</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Intro.mp3')">Intro</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Open.mp3')">Open</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Credit.mp3')">Credit</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Phần thưởng.mp3')">Phần thưởng</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Ô Bí Mật.mp3')">Ô
+            Bí Mật</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Lượt.mp3')">Mất
+            Lượt</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Mất Điểm.mp3')">Mất
+            Điểm</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Thêm Lượt.mp3')">Thêm Lượt</button>
+        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'May Mắn.mp3')">May
+            Mắn</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhân Đôi.mp3')">Nhân Đôi</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Chia Đôi.mp3')">Chia Đôi</button>
 
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Vòng đặc biệt.mp3')">Vòng đặc biệt</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Vòng chung kết.mp3')">Vòng chung kết</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 1.mp3')">Nhạc quay Nón 1</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 2.mp3')">Nhạc quay Nón 2</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 3.mp3')">Nhạc quay Nón 3</button>
-        <button style="background-color: #39ff14; color: #000;" onclick="sendCmd('PLAY_SOUNDBOARD', 'Người chơi.mp3')">Người chơi</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Vòng đặc biệt.mp3')">Vòng đặc biệt</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Vòng chung kết.mp3')">Vòng chung kết</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 1.mp3')">Nhạc quay Nón 1</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 2.mp3')">Nhạc quay Nón 2</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Nhạc quay Nón 3.mp3')">Nhạc quay Nón 3</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Người chơi.mp3')">Người chơi</button>
 
-        <button style="background-color: #ff0000; color: #fff; min-width: 150px; margin-left: 10px;" onclick="sendCmd('STOP_SOUNDBOARD')">DỪNG NHẠC</button>
+        <button style="background-color: #ff0000; color: #fff; min-width: 150px; margin-left: 10px;"
+            onclick="sendCmd('STOP_SOUNDBOARD')">DỪNG NHẠC</button>
+    </div>
+
+    <h3>Soundboard(2001)</h3>
+    <div class="group"
+        style="background: #111; padding: 15px; border-radius: 8px; border: 1px dashed #5ac8fa; gap: 8px;">
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'intro_2001_full.mp3')">Intro</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'nhac_host_entrance.mp3')">Open</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'solved 2001.mp3')">Solve</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'letter_open_1.wav')">Mở chữ</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'mo o chu 2001 2.mp3')">Đánh dấu</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'nhac_hien_o_chu.mp3')">Hiện ô chữ</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'nhac_prize_vđb_1.mp3.mp3')">Vòng Đặc biệt</button>
+
+        <button style="background-color: #ff0000; color: #fff; min-width: 150px; margin-left: 10px;"
+            onclick="sendCmd('STOP_SOUNDBOARD')">DỪNG NHẠC</button>
+    </div>
+
+    <h3>Soundboard(2011)</h3>
+    <div class="group"
+        style="background: #111; padding: 15px; border-radius: 8px; border: 1px dashed #5ac8fa; gap: 8px;">
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'intro_2001_full.mp3')">Intro</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'intro 2010.mp3')">Open(1)</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Credit_2011.mp3')">Credit</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'letter_highlight_new.wav')">Đánh dấu</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'letter_open.wav')">Mở chữ</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'showpuzzle.wav')">Hiện ô chữ</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'solved.mp3')">Solve</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'wrong_1.mp3')">Sai</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Open_2.mp3')">Open(2)</button>
+        <button style="background-color: #39ff14; color: #000;"
+            onclick="sendCmd('PLAY_SOUNDBOARD', 'Open_3.mp3')">Open(3)</button>
+        <button style="background-color: #ff0000; color: #fff; min-width: 150px; margin-left: 10px;"
+            onclick="sendCmd('STOP_SOUNDBOARD')">DỪNG NHẠC</button>
     </div>
 
     <h3>Chọn đề bài từ Excel (1 - 12)</h3>
     <div class="group">
         <script>
-            for (let i = 1; i <= 12; i++) {
+            for (let i = 1; i <= 17; i++) {
                 document.write(`<button class="btn-quiz" id="btnQuiz${i}" onclick="loadQuizFromExcel(${i - 1})">ĐỀ ${i}</button>`);
             }
         </script>
@@ -276,12 +488,22 @@
     <h3>Hệ thống quản lý điểm số</h3>
     <div class="score-control-panel">
         <div class="player-card p1">
-            <div class="player-title" style="color: #ff0000;">NGƯỜI CHƠI 1</div>
+            <div class="player-title" id="p1TitleLabel" style="color: #ff0000;">NGƯỜI CHƠI 1</div>
+
+            <div class="group" style="margin-bottom: 10px; gap: 5px;">
+                <input type="text" id="p1NameInput" placeholder="Tên người chơi..."
+                    style="width: 140px; padding: 5px; border-radius: 4px; border: 1px solid #777;">
+                <button
+                    style="background-color: green; color: white; padding: 5px 10px; min-width: unset; font-size: 12px; border-radius: 4px;"
+                    onclick="setPlayerName(1)">Set</button>
+            </div>
+
             <div class="score-display-wrapper">
                 <span>Vòng: <strong id="p1RoundTxt">0</strong></span>
                 <span>Tổng: <strong id="p1TotalTxt">0</strong></span>
             </div>
-            <input type="text" id="p1ScoreInput" class="score-input" placeholder="Nhập điểm..." oninput="formatInputScore(this)">
+            <input type="text" id="p1ScoreInput" class="score-input" placeholder="Nhập điểm..."
+                oninput="formatInputScore(this)">
             <div class="btn-grid">
                 <button class="btn-action-p" onclick="calcScore(1, 'SUM_TOTAL')">TỔNG +</button>
                 <button class="btn-action-p" onclick="calcScore(1, 'ADD_ROUND')">VÒNG +</button>
@@ -298,12 +520,22 @@
         </div>
 
         <div class="player-card p2">
-            <div class="player-title" style="color: #ffff00;">NGƯỜI CHƠI 2</div>
+            <div class="player-title" id="p2TitleLabel" style="color: #ffff00;">NGƯỜI CHƠI 2</div>
+
+            <div class="group" style="margin-bottom: 10px; gap: 5px;">
+                <input type="text" id="p2NameInput" placeholder="Tên người chơi..."
+                    style="width: 140px; padding: 5px; border-radius: 4px; border: 1px solid #777;">
+                <button
+                    style="background-color: green; color: white; padding: 5px 10px; min-width: unset; font-size: 12px; border-radius: 4px;"
+                    onclick="setPlayerName(2)">Set</button>
+            </div>
+
             <div class="score-display-wrapper">
                 <span>Vòng: <strong id="p2RoundTxt">0</strong></span>
                 <span>Tổng: <strong id="p2TotalTxt">0</strong></span>
             </div>
-            <input type="text" id="p2ScoreInput" class="score-input" placeholder="Nhập điểm..." oninput="formatInputScore(this)">
+            <input type="text" id="p2ScoreInput" class="score-input" placeholder="Nhập điểm..."
+                oninput="formatInputScore(this)">
             <div class="btn-grid">
                 <button class="btn-action-p" onclick="calcScore(2, 'SUM_TOTAL')">TỔNG +</button>
                 <button class="btn-action-p" onclick="calcScore(2, 'ADD_ROUND')">VÒNG +</button>
@@ -320,12 +552,22 @@
         </div>
 
         <div class="player-card p3">
-            <div class="player-title" style="color: #00ffff;">NGƯỜI CHƠI 3</div>
+            <div class="player-title" id="p3TitleLabel" style="color: #00ffff;">NGƯỜI CHƠI 3</div>
+
+            <div class="group" style="margin-bottom: 10px; gap: 5px;">
+                <input type="text" id="p3NameInput" placeholder="Tên người chơi..."
+                    style="width: 140px; padding: 5px; border-radius: 4px; border: 1px solid #777;">
+                <button
+                    style="background-color: green; color: white; padding: 5px 10px; min-width: unset; font-size: 12px; border-radius: 4px;"
+                    onclick="setPlayerName(3)">Set</button>
+            </div>
+
             <div class="score-display-wrapper">
                 <span>Vòng: <strong id="p3RoundTxt">0</strong></span>
                 <span>Tổng: <strong id="p3TotalTxt">0</strong></span>
             </div>
-            <input type="text" id="p3ScoreInput" class="score-input" placeholder="Nhập điểm..." oninput="formatInputScore(this)">
+            <input type="text" id="p3ScoreInput" class="score-input" placeholder="Nhập điểm..."
+                oninput="formatInputScore(this)">
             <div class="btn-grid">
                 <button class="btn-action-p" onclick="calcScore(3, 'SUM_TOTAL')">TỔNG +</button>
                 <button class="btn-action-p" onclick="calcScore(3, 'ADD_ROUND')">VÒNG +</button>
@@ -347,8 +589,10 @@
         <button style="background-color: red; color: #fff;" onclick="switchScoreMode('TOTAL')">HIỆN ĐIỂM TỔNG</button>
         <button style="background-color: red; color: #fff;" onclick="globalResetScore('ROUND')">RESET ĐIỂM VÒNG</button>
         <button style="background-color: red; color: #fff;" onclick="globalResetScore('TOTAL')">RESET ĐIỂM TỔNG</button>
+        <button style="background-color: red; color: white;" onclick="setScoreVisibility(true)">Hiện bảng điểm</button>
+        <button style="background-color: red; color: white;" onclick="setScoreVisibility(false)">Ẩn bảng điểm</button>
     </div>
-    
+
     <div id="alphabetSection" style="display: none;">
         <h3>Bàn phím đoán chữ cái (Đề đoán chữ)</h3>
         <div class="group" id="alphabetContainer"></div>
@@ -356,8 +600,8 @@
         <div style="margin-top: 20px; text-align: center;">
             <label style="color: aqua;">SỐ Ô CẦN MỞ:</label>
             <input type="number" id="numCells"
-                style="padding: 5px; width: 60px; margin-left: 10px; text-align: center; border-radius: 4px;"
-                min="0" max="52" oninput="generateChildTextBoxes()">
+                style="padding: 5px; width: 60px; margin-left: 10px; text-align: center; border-radius: 4px;" min="0"
+                max="52" oninput="generateChildTextBoxes()">
         </div>
 
         <div id="childTextBoxes" class="group" style="margin-top: 15px;"></div>
@@ -378,16 +622,21 @@
                 </script>
             </div>
             <div class="group" style="margin-top: 15px;">
-                <button style="background-color: green; color: white;"
-                    onclick="confirmExtraLetters()">XÁC NHẬN</button>
-                <button style="background-color: blue; color: white;"
-                    onclick="clearExtraLetters()">XÓA TẤT CẢ</button>
+                <button style="background-color: green; color: white;" onclick="confirmExtraLetters()">XÁC NHẬN</button>
+                <button style="background-color: green; color: white;" onclick="clearExtraLetters()">XÓA TẤT CẢ</button>
             </div>
-            
+
             <h3 style="color: #ffcc00; margin-top: 15px; border: none;">Thời gian suy nghĩ (Đề 10, 11, 12):</h3>
+
             <div class="group">
-                <button class="btn-time-30" onclick="sendCmd('PLAY_TIMER', 30)">30 GIÂY</button>
-                <button class="btn-time-10" onclick="sendCmd('PLAY_TIMER', 10)">10 GIÂY</button>
+                <button class="btn-time-30" onclick="sendCmd('PLAY_TIMER', { seconds: 30, isSpecial: false })">30s (Nhạc
+                    1)</button>
+                <button class="btn-time-30" onclick="sendCmd('PLAY_TIMER', { seconds: 30, isSpecial: true })">30s (Nhạc
+                    2)</button>
+                <button class="btn-time-10" onclick="sendCmd('PLAY_TIMER', { seconds: 10, isSpecial: false })">10s (Nhạc
+                    1)</button>
+                <button class="btn-time-10" onclick="sendCmd('PLAY_TIMER', { seconds: 10, isSpecial: true })">10s (Nhạc
+                    2)</button>
             </div>
         </div>
     </div>
@@ -407,32 +656,59 @@
         const channel = supabaseClient.channel('crossword_broadcast_room', {
             config: { broadcast: { ack: false, self: true } }
         });
-        channel.subscribe((status) => {
-            if (status === 'SUBSCRIBED') {
-                // Đảm bảo đồng bộ điểm ngay khi kết nối thành công
-                setTimeout(updateScoreUI, 500);
-            }
-        });
+
+        let syncInterval = null;
+        let hasReceivedSync = false;
+
+        function requestSyncState() {
+            console.log("Control panel sending REQUEST_SYNC_STATE...");
+            channel.send({
+                type: 'broadcast',
+                event: 'crossword_event',
+                payload: { type: 'REQUEST_SYNC_STATE' }
+            });
+        }
 
         let tossupTimeout = null;
         let isTossupRunning = false;
         let controlActiveQuizLetters = [];
         let controlRevealedStates = new Array(52).fill(false);
+        let isScoreVisible = true;
+        let currentQuizIndex = -1;
+        let buzzerState = "LOCKED";
 
         let scoresData = {
-            p1: { round: 0, total: 0, mode: 'ROUND', light: 'COLOR' },
-            p2: { round: 0, total: 0, mode: 'ROUND', light: 'COLOR' },
-            p3: { round: 0, total: 0, mode: 'ROUND', light: 'COLOR' }
+            p1: { name: 'Người chơi 1', round: 0, total: 0, mode: 'ROUND', light: 'COLOR' },
+            p2: { name: 'Người chơi 2', round: 0, total: 0, mode: 'ROUND', light: 'COLOR' },
+            p3: { name: 'Người chơi 3', round: 0, total: 0, mode: 'ROUND', light: 'COLOR' }
         };
+
+        // --- VÒNG ĐẶC BIỆT STATE ---
+        let specialTimerValue = 45;
+        let specialTimerInterval = null;
+        let specialIsRunning = false;
+        let specialSelectedPlayer = null;
+        let specialTimeout = null;
 
         channel.on('broadcast', { event: 'display-to-control' }, ({ payload }) => {
             const { type, data } = payload;
 
+            if (type === "PLAYER_BUZZ_REQUEST") {
+                if (specialIsRunning && data === specialSelectedPlayer) {
+                    // Dừng hiện chữ, dừng đồng hồ, chuông bị khóa lập tức
+                    specialIsRunning = false;
+                    clearTimeout(specialTimeout);
+                    clearInterval(specialTimerInterval);
+                    sendCmd('CONTROL_BUZZER_PLAYER', { playerId: null, state: "LOCK" });
+                }
+            }
+
             if (type === "UPDATE_QUIZ_ACTIVE") {
-                for (let i = 1; i <= 12; i++) {
+                for (let i = 1; i <= 17; i++) {
                     document.getElementById(`btnQuiz${i}`).classList.remove("active");
                 }
-                document.getElementById(`btnQuiz${data + 1}`).classList.add("active");
+                const btn = document.getElementById(`btnQuiz${data + 1}`);
+                if (btn) btn.classList.add("active");
 
                 const targetQuizzes = [2, 3, 4, 8, 9, 10, 11];
                 if (targetQuizzes.includes(data)) {
@@ -456,7 +732,10 @@
                 document.getElementById("startBtn").classList.remove("active");
                 document.getElementById("pauseBtn").classList.remove("active");
                 document.getElementById("playBtn").classList.remove("active");
-                if (data) document.getElementById(data).classList.add("active");
+                if (data) {
+                    const activeBtn = document.getElementById(data);
+                    if (activeBtn) activeBtn.classList.add("active");
+                }
 
                 if (data === "startBtn" || data === "playBtn") {
                     isTossupRunning = true;
@@ -472,6 +751,130 @@
             }
         });
 
+        channel.on('broadcast', { event: 'crossword_event' }, ({ payload }) => {
+            if (!payload) return;
+
+            if (payload.type === 'FULL_STATE_UPDATE') {
+                const state = payload.data;
+                if (!state) return;
+
+                hasReceivedSync = true;
+                if (syncInterval) {
+                    clearInterval(syncInterval);
+                    syncInterval = null;
+                }
+
+                // Sync scoresData
+                if (state.scoresData) {
+                    scoresData = JSON.parse(JSON.stringify(state.scoresData));
+                    updateScoreUI();
+                }
+
+                // Sync isScoreVisible
+                if (state.isScoreVisible !== undefined) {
+                    isScoreVisible = state.isScoreVisible;
+                }
+
+                // Sync active quiz index and letters
+                if (state.currentQuiz) {
+                    currentQuizIndex = state.currentQuiz.index;
+                    controlActiveQuizLetters = state.currentQuiz.letters || [];
+
+                    // Rebuild active button class on control panel
+                    for (let i = 1; i <= 17; i++) {
+                        document.getElementById(`btnQuiz${i}`).classList.remove("active");
+                    }
+                    const btn = document.getElementById(`btnQuiz${currentQuizIndex + 1}`);
+                    if (btn) btn.classList.add("active");
+
+                    // Show alphabetSection and extraLettersSection if applicable
+                    const targetQuizzes = [2, 3, 4, 8, 9, 10, 11];
+                    const alphSection = document.getElementById("alphabetSection");
+                    if (alphSection) {
+                        if (targetQuizzes.includes(currentQuizIndex)) {
+                            alphSection.style.display = "block";
+                        } else {
+                            alphSection.style.display = "none";
+                        }
+                    }
+
+                    const extraLetSection = document.getElementById("extraLettersSection");
+                    if (extraLetSection) {
+                        if ([9, 10, 11].includes(currentQuizIndex)) {
+                            extraLetSection.style.display = "block";
+                        } else {
+                            extraLetSection.style.display = "none";
+                        }
+                    }
+
+                    // Sync controlRevealedStates from revealedPositions
+                    controlRevealedStates = new Array(52).fill(false);
+                    if (state.revealedPositions && Array.isArray(state.revealedPositions)) {
+                        state.revealedPositions.forEach(pos => {
+                            controlRevealedStates[pos - 1] = true;
+                        });
+                    }
+                }
+
+                // Sync timer
+                if (state.specialTimerValue !== undefined) {
+                    const timerDisplay = document.getElementById("specialTimerDisplay");
+                    if (timerDisplay) timerDisplay.textContent = state.specialTimerValue;
+                    specialTimerValue = state.specialTimerValue;
+                }
+            }
+
+            else if (payload.type === 'REQUEST_SYNC_STATE') {
+                console.log("Control panel responding to REQUEST_SYNC_STATE...");
+                let revealedPositions = [];
+                controlRevealedStates.forEach((val, idx) => {
+                    if (val) revealedPositions.push(idx + 1);
+                });
+
+                // Build standard gameState object matching script.js
+                const synState = {
+                    players: {
+                        p1: { name: scoresData.p1.name, score: scoresData.p1.mode === 'ROUND' ? scoresData.p1.round : scoresData.p1.total, statusClass: "" },
+                        p2: { name: scoresData.p2.name, score: scoresData.p2.mode === 'ROUND' ? scoresData.p2.round : scoresData.p2.total, statusClass: "" },
+                        p3: { name: scoresData.p3.name, score: scoresData.p3.mode === 'ROUND' ? scoresData.p3.round : scoresData.p3.total, statusClass: "" }
+                    },
+                    scoresData: scoresData,
+                    isScoreVisible: isScoreVisible,
+                    currentQuiz: {
+                        index: currentQuizIndex,
+                        letters: controlActiveQuizLetters || []
+                    },
+                    revealedPositions: revealedPositions,
+                    buzzerState: buzzerState,
+                    specialSelectedPlayer: specialSelectedPlayer,
+                    specialTimerValue: specialTimerValue
+                };
+
+                channel.send({
+                    type: 'broadcast',
+                    event: 'crossword_event',
+                    payload: { type: 'FULL_STATE_UPDATE', data: synState }
+                });
+            }
+        });
+
+        channel.subscribe((status) => {
+            if (status === 'SUBSCRIBED') {
+                console.log("Control panel channel SUBSCRIBED successfully!");
+                setTimeout(updateScoreUI, 500);
+                requestSyncState();
+                if (syncInterval) clearInterval(syncInterval);
+                syncInterval = setInterval(() => {
+                    if (!hasReceivedSync && currentQuizIndex === -1 && scoresData.p1.name === "Người chơi 1") {
+                        requestSyncState();
+                    } else {
+                        clearInterval(syncInterval);
+                        syncInterval = null;
+                    }
+                }, 2000);
+            }
+        });
+
         function formatNumberWithDots(num) {
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
@@ -482,13 +885,31 @@
         }
 
         function formatInputScore(input) {
-            let value = input.value.replace(/\D/g, ""); 
+            let value = input.value.replace(/\D/g, "");
             if (value !== "") {
                 input.value = formatNumberWithDots(parseInt(value));
             }
         }
 
+        function setPlayerName(playerNum) {
+            let key = 'p' + playerNum;
+            let nameInput = document.getElementById(key + 'NameInput');
+            let newName = nameInput.value.trim();
+
+            if (newName !== "") {
+                scoresData[key].name = newName.toUpperCase();
+                updateScoreUI();
+                nameInput.value = "";
+            } else {
+                showCustomAlert("Vui lòng nhập tên hợp lệ trước khi bấm Set!");
+            }
+        }
+
         function updateScoreUI() {
+            document.getElementById("p1TitleLabel").textContent = scoresData.p1.name;
+            document.getElementById("p2TitleLabel").textContent = scoresData.p2.name;
+            document.getElementById("p3TitleLabel").textContent = scoresData.p3.name;
+
             document.getElementById("p1RoundTxt").textContent = formatNumberWithDots(scoresData.p1.round);
             document.getElementById("p1TotalTxt").textContent = formatNumberWithDots(scoresData.p1.total);
             document.getElementById("p2RoundTxt").textContent = formatNumberWithDots(scoresData.p2.round);
@@ -496,7 +917,7 @@
             document.getElementById("p3RoundTxt").textContent = formatNumberWithDots(scoresData.p3.round);
             document.getElementById("p3TotalTxt").textContent = formatNumberWithDots(scoresData.p3.total);
 
-            sendCmd("SYNC_SCORES", scoresData);
+            syncScoreToDisplay();
         }
 
         function calcScore(playerNum, action) {
@@ -547,6 +968,18 @@
             updateScoreUI();
         }
 
+        function setScoreVisibility(visible) {
+            isScoreVisible = visible;
+            syncScoreToDisplay();
+        }
+
+        function syncScoreToDisplay() {
+            sendCmd('SYNC_SCORES', {
+                scoresData: scoresData,
+                scoreVisible: isScoreVisible
+            });
+        }
+
         let importedQuizzes = [];
 
         function handleExcel(input) {
@@ -558,7 +991,7 @@
                 const workbook = XLSX.read(data, { type: 'array' });
                 importedQuizzes = [];
 
-                for (let i = 0; i < Math.min(workbook.SheetNames.length, 12); i++) {
+                for (let i = 0; i < Math.min(workbook.SheetNames.length, 17); i++) {
                     const sheetName = workbook.SheetNames[i];
                     const sheet = workbook.Sheets[sheetName];
                     importedQuizzes.push(parseExcelGrid(sheet));
@@ -602,6 +1035,7 @@
 
             controlActiveQuizLetters = quizLetters;
             controlRevealedStates = new Array(52).fill(false);
+            currentQuizIndex = quizIndex;
             clearTimeout(tossupTimeout);
             isTossupRunning = false;
 
@@ -692,6 +1126,38 @@
         }
 
         function sendCmd(type, data = null) {
+            if (type === "REVEAL_ALL") {
+                controlRevealedStates = new Array(52).fill(true);
+            } else if (type === "RESET_BOARD") {
+                controlRevealedStates = new Array(52).fill(false);
+            } else if (type === "REVEAL_SEQ" && Array.isArray(data)) {
+                data.forEach(pos => {
+                    controlRevealedStates[pos - 1] = true;
+                });
+            } else if (type === "CONTROL_BUZZER") {
+                if (data === "OPEN" || data === "RESET_OPEN") {
+                    buzzerState = "OPEN_NORMAL";
+                } else {
+                    buzzerState = "LOCKED";
+                }
+            } else if (type === "CONTROL_BUZZER_PLAYER") {
+                if (data && data.state === "OPEN") {
+                    buzzerState = "SPECIAL_PLAYER_OPEN";
+                    specialSelectedPlayer = data.playerId;
+                } else {
+                    buzzerState = "LOCKED";
+                    specialSelectedPlayer = null;
+                }
+            } else if (type === "SPECIAL_REVEAL_MULTIPLE" && data && Array.isArray(data.positions)) {
+                data.positions.forEach(pos => {
+                    controlRevealedStates[pos - 1] = true;
+                });
+            } else if (type === "SPECIAL_REVEAL_CELL" && data && data.absoluteIndex) {
+                controlRevealedStates[data.absoluteIndex - 1] = true;
+            } else if (type === "SPECIAL_TIMER_UPDATE" && data && data.seconds !== undefined) {
+                specialTimerValue = data.seconds;
+            }
+
             channel.send({
                 type: 'broadcast',
                 event: 'control-to-display',
@@ -765,43 +1231,207 @@
                 showCustomAlert("Từ khóa thủ công tối đa là 14 ký tự để xếp vừa hàng 2!");
                 return;
             }
+            
+            // Reconstruct the manual text grid to sync correctly
+            const rowConfigs = [
+                { startIdx: 0, totalCells: 12 },
+                { startIdx: 12, totalCells: 14 },
+                { startIdx: 26, totalCells: 14 },
+                { startIdx: 40, totalCells: 12 }
+            ];
+            let manualTextGrid = new Array(52).fill("");
+            let targetRowIndex = 1;
+            const lines = txt.split('\n').map(line => line.trim().toUpperCase()).filter(line => line !== "");
+            lines.forEach((lineText, index) => {
+                let currentRow = targetRowIndex + index;
+                if (currentRow > 3) currentRow = 3;
+                let config = rowConfigs[currentRow];
+                let offset = Math.floor((config.totalCells - lineText.length) / 2);
+                if (offset < 0) offset = 0;
+                let activeStartIdx = config.startIdx + offset;
+                for (let charPos = 0; charPos < lineText.length; charPos++) {
+                    let gridIndex = activeStartIdx + charPos;
+                    if (gridIndex < config.startIdx + config.totalCells) {
+                        manualTextGrid[gridIndex] = lineText[charPos];
+                    }
+                }
+            });
+            controlActiveQuizLetters = manualTextGrid;
+            controlRevealedStates = new Array(52).fill(false);
+            // Since they are shown instantly on the board, let's treat non-empty cells as revealed
+            controlActiveQuizLetters.forEach((letter, i) => {
+                if (letter && letter !== " " && letter !== "") {
+                    controlRevealedStates[i] = true;
+                }
+            });
+            currentQuizIndex = -1;
+
             sendCmd("SHOW_MANUAL_TEXT", txt);
         }
 
-        // --- CHỨC NĂNG DISABLE DEVTOOLS TOÀN DIỆN (CHẠY ĐƯỢC CẢ DẠNG FILE) ---
-function disableDevTools() {
-    document.addEventListener('contextmenu', e => e.preventDefault());
-
-    document.addEventListener('keydown', function (e) {
-        if (e.key === 'F12') { e.preventDefault(); return false; }
-        if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.key === 'i' || e.key === 'j' || e.key === 'c')) { e.preventDefault(); return false; }
-        if (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's')) { e.preventDefault(); return false; }
-    });
-
-    const devtools = { isOpen: false };
-    const element = new Image();
-    Object.defineProperty(element, 'id', {
-        get: function () {
-            devtools.isOpen = true;
-            window.location.reload();
+        // --- LOGIC XỬ LÝ VÒNG ĐẶC BIỆT ---
+        function specialSetTimer() {
+            clearInterval(specialTimerInterval);
+            specialTimerValue = 45;
+            const timerDisplay = document.getElementById("specialTimerDisplay");
+            if (timerDisplay) timerDisplay.textContent = specialTimerValue;
+            sendCmd('SPECIAL_TIMER_UPDATE', { seconds: specialTimerValue });
         }
-    });
 
-    setInterval(function() {
-        devtools.isOpen = false;
-        console.log(element);
-        console.clear();
-        
-        const threshold = 160;
-        const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-        const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-        if (widthThreshold || heightThreshold) {
-            document.body.innerHTML = "<h1 style='color:white;text-align:center;margin-top:20%;'>Không được phép mở DevTools! Vui lòng tắt DevTools và F5 lại trang.</h1>";
+        function specialSelectPlayer(playerVal) {
+            if (playerVal !== "") {
+                specialSelectedPlayer = parseInt(playerVal);
+                sendCmd('CONTROL_BUZZER_PLAYER', { playerId: specialSelectedPlayer, state: "OPEN" });
+            } else {
+                specialSelectedPlayer = null;
+                sendCmd('CONTROL_BUZZER_PLAYER', { playerId: null, state: "LOCK" });
+            }
         }
-    }, 500);
-}
 
-disableDevTools();
+        function removeTonesForSpecial(str) {
+            if (!str) return "";
+            // Normalize to NFD to separate base characters and tone marks, then remove the 5 Vietnamese tone marks
+            let normalized = str.normalize("NFD").replace(/[\u0300\u0301\u0309\u0303\u0323]/g, "");
+            // Convert back to NFC
+            normalized = normalized.normalize("NFC");
+
+            const map = {
+                "á": "a", "à": "a", "ả": "a", "ã": "a", "ạ": "a", "Á": "A", "À": "A", "Ả": "A", "Ã": "A", "Ạ": "A",
+                "é": "e", "è": "e", "ẻ": "e", "ẽ": "e", "ẹ": "e", "É": "E", "È": "E", "Ẻ": "E", "Ẽ": "E", "Ẹ": "E",
+                "í": "i", "ì": "i", "ỉ": "i", "ĩ": "i", "ị": "i", "Í": "I", "Ì": "I", "Ỉ": "I", "Ĩ": "I", "Ị": "I",
+                "ó": "o", "ò": "o", "ỏ": "o", "õ": "o", "ọ": "o", "Ó": "O", "Ò": "O", "Ỏ": "O", "Õ": "O", "Ọ": "O",
+                "ố": "ô", "ồ": "ô", "ổ": "ô", "ỗ": "ô", "ộ": "ô", "Ố": "Ô", "Ồ": "Ô", "Ổ": "Ô", "Ỗ": "Ô", "Ộ": "Ô",
+                "ớ": "ơ", "ờ": "ơ", "ở": "ơ", "ỡ": "ơ", "ợ": "ơ", "Ớ": "Ơ", "Ờ": "Ơ", "Ở": "Ơ", "Ỡ": "Ơ", "Ợ": "Ơ",
+                "ú": "u", "ù": "u", "ủ": "u", "ũ": "u", "ụ": "u", "Ú": "U", "Ù": "U", "Ủ": "U", "Ũ": "U", "Ụ": "U",
+                "ứ": "ư", "ừ": "ư", "ử": "ư", "ữ": "ư", "ự": "ư", "Ứ": "Ư", "Ừ": "Ư", "Ử": "Ư", "Ữ": "Ư", "Ự": "Ư",
+                "ý": "y", "ỳ": "y", "ỷ": "y", "ỹ": "y", "ỵ": "y", "Ý": "Y", "Ỳ": "Y", "Ỷ": "Y", "Ỹ": "Y", "Ỵ": "Y"
+            };
+            return normalized.split("").map(c => map[c] || c).join("");
+        }
+
+        function specialStartReveal() {
+            const selectedPlayer = document.getElementById("specialPlayerSelect").value;
+            if (!selectedPlayer) {
+                showCustomAlert("Vui lòng chọn Player được mở chuông trước khi chạy!");
+                return;
+            }
+            if (controlActiveQuizLetters.length === 0) {
+                showCustomAlert("Chưa nạp đề bài!");
+                return;
+            }
+
+            specialSelectedPlayer = parseInt(selectedPlayer);
+            specialIsRunning = true;
+
+            // 1. Reveal N, G, H, I, A letters simultaneously (Ă and Â excluded)
+            let matchPositions = [];
+            const targetLetters = ['N', 'G', 'H', 'I', 'A'];
+            controlActiveQuizLetters.forEach((letter, idx) => {
+                if (letter) {
+                    const cleanedLetter = removeTonesForSpecial(letter.replace("_", "")).toUpperCase();
+                    if (targetLetters.includes(cleanedLetter)) {
+                        matchPositions.push(idx + 1);
+                        controlRevealedStates[idx] = true;
+                    }
+                }
+            });
+
+            // Gửi lệnh lật đồng loạt các chữ N,G,H,I,A instantly
+            sendCmd('SPECIAL_REVEAL_MULTIPLE', { positions: matchPositions });
+
+            // 2. Open buzzer for selected player
+            sendCmd('CONTROL_BUZZER_PLAYER', { playerId: specialSelectedPlayer, state: "OPEN" });
+
+            // 3. Start timer countdown
+            startSpecialTimer();
+
+            // 4. Reveal the remaining letters one by one randomly
+            clearTimeout(specialTimeout);
+            specialRevealRandomCell();
+        }
+
+        function startSpecialTimer() {
+            clearInterval(specialTimerInterval);
+            specialTimerInterval = setInterval(() => {
+                if (specialTimerValue > 0) {
+                    specialTimerValue--;
+                    const timerDisplay = document.getElementById("specialTimerDisplay");
+                    if (timerDisplay) timerDisplay.textContent = specialTimerValue;
+                    sendCmd('SPECIAL_TIMER_UPDATE', { seconds: specialTimerValue });
+                } else {
+                    clearInterval(specialTimerInterval);
+                    specialIsRunning = false;
+                    clearTimeout(specialTimeout);
+
+                    // Lock all buzzers
+                    sendCmd('CONTROL_BUZZER_PLAYER', { playerId: null, state: "LOCK" });
+                    
+                    // Play wrong/buzzer sound
+                    sendCmd('PLAY_SOUNDBOARD', 'wrong_1.mp3');
+                    sendCmd('SPECIAL_TIMER_UPDATE', { seconds: 0 });
+                }
+            }, 1000);
+        }
+
+        function specialRevealRandomCell() {
+            if (!specialIsRunning) return;
+
+            let hiddenIndices = [];
+            controlActiveQuizLetters.forEach((letter, i) => {
+                if (letter !== "" && letter !== " " && letter && !controlRevealedStates[i]) {
+                    hiddenIndices.push(i);
+                }
+            });
+
+            if (hiddenIndices.length === 0) {
+                specialIsRunning = false;
+                clearTimeout(specialTimeout);
+                return;
+            }
+
+            const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+            controlRevealedStates[randomIndex] = true;
+
+            sendCmd('SPECIAL_REVEAL_CELL', { absoluteIndex: randomIndex + 1 });
+
+            const randomDelay = Math.random() * (1500 - 1000) + 1000;
+            specialTimeout = setTimeout(specialRevealRandomCell, randomDelay);
+        }
+
+        function specialPause() {
+            specialIsRunning = false;
+            clearTimeout(specialTimeout);
+            clearInterval(specialTimerInterval);
+
+            // Lock all buzzers
+            sendCmd('CONTROL_BUZZER_PLAYER', { playerId: null, state: "LOCK" });
+        }
+
+        function specialResume() {
+            if (controlActiveQuizLetters.length === 0) return;
+            if (specialIsRunning) return;
+
+            const selectedPlayer = document.getElementById("specialPlayerSelect").value;
+            if (!selectedPlayer) {
+                showCustomAlert("Vui lòng chọn Player được mở chuông!");
+                return;
+            }
+
+            specialIsRunning = true;
+            specialSelectedPlayer = parseInt(selectedPlayer);
+
+            // Open buzzer again
+            sendCmd('CONTROL_BUZZER_PLAYER', { playerId: specialSelectedPlayer, state: "OPEN" });
+
+            // Resume timer
+            startSpecialTimer();
+
+            // Resume cell revealing
+            clearTimeout(specialTimeout);
+            specialRevealRandomCell();
+        }
+
+        // Đồng bộ ban đầu đã được xử lý bởi channel.subscribe() callback
     </script>
 </body>
 

@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <title>Player 3</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        *, body, div, p, span, button {
+        *,
+        body,
+        div,
+        p,
+        span,
+        button {
             font-weight: bold !important;
         }
+
         body {
-            margin: 0; padding: 0; background: #111;
-            display: flex; flex-direction: row; height: 100vh; overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: #111;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            overflow: hidden;
         }
+
         #leftContainer {
-            width: 80%; display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start; overflow-y: auto;
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
         }
+
         #rightContainer {
-            width: 20%; background: #222; border-left: 3px solid #444;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: flex-start; gap: 20px; padding: 20px 10px; box-sizing: border-box;
-            height: 100vh; /* Kéo full chiều cao màn hình */
-        }
-        @font-face {
-            font-family: 'UTM HELVETINS';
-            src: url('UTM HELVETINS_3.TTF') format('truetype');
+            width: 20%;
+            background: #222;
+            border-left: 3px solid #444;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 20px;
+            padding: 20px 10px;
+            box-sizing: border-box;
+            height: 100vh;
         }
 
         #scoreContainer {
             display: flex;
             justify-content: center;
-            /* Giữ khoảng cách gap lớn để bù trừ không gian vật lý khi scale(5) */
             gap: 160px;
             margin: 80px auto 90px auto;
             max-width: 1400px;
@@ -40,45 +60,57 @@
             z-index: 10;
         }
 
+        @font-face {
+            font-family: 'SVN-Gilroy';
+            src: url('SVN-Gilroy Black.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
         .score-box {
             display: inline-flex;
-            align-items: flex-end;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             text-align: center;
             transition: all 0.3s ease;
-            font-family: 'UTM HELVETINS', Arial, sans-serif;
-
-            /* Cố định kích thước khung chữ gốc siêu nhỏ để khi scale(5) lên ảnh không bị biến dạng */
+            font-family: 'SVN-Gilroy', sans-serif;
             width: 60px;
-            /* Khi nhân 5 sẽ tương đương rộng 300px trên màn hình */
             height: 20px;
-            /* Khi nhân 5 sẽ tương đương cao 100px trên màn hình */
-
-            /* Ép ảnh vừa khít theo tỷ lệ khung, không dùng contain tự co giãn nữa nhằm tránh bị phình bự */
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-
-            /* Bỏ padding px lớn cũ để tránh làm tăng kích thước div khi chữ dài ra */
-            padding: 0 4px 2.5px 4px;
+            padding: 2px 4px;
             box-sizing: border-box;
-
-            /* Font size gốc */
-            font-size: 8px;
             white-space: nowrap;
-            /* Không cho phép xuống dòng khi chuỗi số dài */
-
-            /* Thực hiện scale(5) giữ nguyên phông dáng */
             transform: scale(5);
             transform-origin: center;
-
-            /* Giảm bớt margin ngoài vì gap và width/height ở trên đã đủ căn khoảng cách */
             margin-top: 10px;
             margin-left: 70px;
             margin-right: 70px;
         }
 
-        /* Giữ nguyên phần map ảnh nền */
+        .score-box .player-name-label {
+            font-size: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            line-height: 1.3;
+            margin-bottom: 0.2px;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transform: translateY(1.2px);
+        }
+
+        .score-box .player-score-val {
+            font-size: 7px;
+            font-weight: bold;
+            line-height: 1;
+            display: block;
+            margin-bottom: -1px;
+        }
+
         .score-red {
             background-image: url("scorered.png") !important;
             color: #ffffff !important;
@@ -104,48 +136,114 @@
             border: none !important;
         }
 
+        #scoreContainer.score-hidden {
+            display: none !important;
+        }
+
         #board {
-            position: relative; margin-top: 20px; transform: scale(0.9); transform-origin: top center;
-            background: url("khungbang.png") center center no-repeat; background-size: 100% 100%;
+            position: relative;
+            margin-top: 20px;
+            transform: scale(0.9);
+            transform-origin: top center;
+            background: url("khungbang.png") center center no-repeat;
+            background-size: 100% 100%;
         }
+
         .status-box {
-            width: 90%; padding: 20px 10px; font-size: 18px; text-align: center;
-            border-radius: 8px; background: purple; color: #fff; box-sizing: border-box;
+            width: 90%;
+            padding: 20px 10px;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 8px;
+            background: purple;
+            color: #fff;
+            box-sizing: border-box;
         }
-        .status-p1-active { background-color: #FF0000 !important; color: #ffffff !important; }
-        .status-p2-active { background-color: #FFFF00 !important; color: #000000 !important; }
-        .status-p3-active { background-color: #0000FF !important; color: #ffffff !important; }
 
-        /* Nút bấm chuông dạng hình chữ nhật */
+        .status-p1-active {
+            background-color: #FF0000 !important;
+            color: #ffffff !important;
+        }
+
+        .status-p2-active {
+            background-color: #FFFF00 !important;
+            color: #000000 !important;
+        }
+
+        .status-p3-active {
+            background-color: #0000FF !important;
+            color: #ffffff !important;
+        }
+
         #buzzerBtn {
-            width: 90%; height: 1200px; font-size: 24px; border: none; border-radius: 8px;
-            cursor: pointer; transition: all 0.2s ease; margin-top: auto; /* Đẩy nút xuống dưới cùng */
+            width: 90%;
+            height: 1200px;
+            font-size: 24px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: auto;
         }
-        .buzzer-unlocked { background: #ffffff; color: #000000; }
-        .buzzer-unlocked:hover {background: orange;color: white;}
-        .buzzer-locked { background: #000000; color: #ffffff; border: 3px solid #fff; cursor: not-allowed; }
 
-        /* Nút bấm chuông dạng hình chữ nhật */
-#buzzerBtn {
-    width: 90%; height: 1200px; font-size: 24px; border: none; border-radius: 8px;
-    cursor: pointer; transition: all 0.2s ease; margin-top: auto; /* Đẩy nút xuống dưới cùng */
-}
-.buzzer-unlocked { background: #ffffff; color: #000000; }
-.buzzer-unlocked:hover { background: orange; color: white; }
-.buzzer-locked { background: #000000; color: #ffffff; border: 3px solid #fff; cursor: not-allowed; }
+        .buzzer-unlocked {
+            background: #ffffff;
+            color: #000000;
+        }
 
-/* --- PHẦN THÊM MỚI: GIỮ NGUYÊN MÀU KHI HOVER CHO TỪNG PLAYER --- */
-.buzzer-p1-active, .buzzer-p1-active:hover { background: #ff0000 !important; color: #ffffff !important; border: none !important; cursor: not-allowed; }
-.buzzer-p2-active, .buzzer-p2-active:hover { background: #ffff00 !important; color: #000000 !important; border: none !important; cursor: not-allowed; }
-.buzzer-p3-active, .buzzer-p3-active:hover { background: #0000ff !important; color: #ffffff !important; border: none !important; cursor: not-allowed; }
+        .buzzer-unlocked:hover {
+            background: orange;
+            color: white;
+        }
+
+        .buzzer-locked {
+            background: #000000;
+            color: #ffffff;
+            border: 3px solid #fff;
+            cursor: not-allowed;
+        }
+
+        .buzzer-p1-active,
+        .buzzer-p1-active:hover {
+            background: #ff0000 !important;
+            color: #ffffff !important;
+            border: none !important;
+            cursor: not-allowed;
+        }
+
+        .buzzer-p2-active,
+        .buzzer-p2-active:hover {
+            background: #ffff00 !important;
+            color: #000000 !important;
+            border: none !important;
+            cursor: not-allowed;
+        }
+
+        .buzzer-p3-active,
+        .buzzer-p3-active:hover {
+            background: #0000ff !important;
+            color: #ffffff !important;
+            border: none !important;
+            cursor: not-allowed;
+        }
     </style>
 </head>
+
 <body>
     <div id="leftContainer">
         <div id="scoreContainer">
-            <div id="scoreBox1" class="score-box score-red">0</div>
-            <div id="scoreBox2" class="score-box score-yellow">0</div>
-            <div id="scoreBox3" class="score-box score-blue">0</div>
+            <div id="scoreBox1" class="score-box score-red">
+                <span id="p1NameLabel" class="player-name-label">PLAYER 1</span>
+                <span id="p1ScoreVal" class="player-score-val">0</span>
+            </div>
+            <div id="scoreBox2" class="score-box score-yellow">
+                <span id="p2NameLabel" class="player-name-label">PLAYER 2</span>
+                <span id="p2ScoreVal" class="player-score-val">0</span>
+            </div>
+            <div id="scoreBox3" class="score-box score-blue">
+                <span id="p3NameLabel" class="player-name-label">PLAYER 3</span>
+                <span id="p3ScoreVal" class="player-score-val">0</span>
+            </div>
         </div>
         <div id="board"></div>
     </div>
@@ -154,6 +252,7 @@
         <div id="statusBox1" class="status-box">PLAYER 1</div>
         <div id="statusBox2" class="status-box">PLAYER 2</div>
         <div id="statusBox3" class="status-box">PLAYER 3</div>
+        <div style="color: aqua; font-size: 14px; font-weight: bold; text-align: center; margin-top: 10px; border: 1px solid aqua; padding: 8px; border-radius: 4px;">THỜI GIAN: <span id="specialTimerDisplay">45</span> S</div>
         <button id="buzzerBtn" class="buzzer-locked" disabled onclick="pressBuzzer()">CHUÔNG</button>
     </div>
 
@@ -161,7 +260,14 @@
         window.SUPABASE_URL = "https://tukabyhjmcyptuwmwedp.supabase.co";
         window.SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1a2FieWhqbWN5cHR1d213ZWRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0NDk3NDksImV4cCI6MjA5NjAyNTc0OX0.gNWdvZ_hRdon_w_KL3C3eXFFiV_EoA4eLgikcYb6dpQ";
         const MY_PLAYER_ID = 3;
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'F12') { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.key === 'U') { e.preventDefault(); return false; }
+        });
     </script>
     <script src="script.js"></script>
 </body>
+
 </html>

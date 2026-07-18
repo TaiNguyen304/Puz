@@ -1,37 +1,59 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="UTF-8">
     <title>Host</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Đảm bảo toàn bộ chữ hiển thị đậm theo phong cách hệ thống */
-        *, body, div, p, span, button, input {
+        *,
+        body,
+        div,
+        p,
+        span,
+        button,
+        input {
             font-weight: bold !important;
         }
+
         body {
-            margin: 0; padding: 0; background: #111;
-            display: flex; flex-direction: row; height: 100vh; overflow: hidden;
+            margin: 0;
+            padding: 0;
+            background: #111;
+            display: flex;
+            flex-direction: row;
+            height: 100vh;
+            overflow: hidden;
         }
+
         #leftContainer {
-            width: 80%; display: flex; flex-direction: column;
-            align-items: center; justify-content: flex-start; overflow-y: auto;
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
         }
+
         #rightContainer {
-            width: 20%; background: #222; border-left: 3px solid #444;
-            display: flex; flex-direction: column; align-items: center;
-            justify-content: flex-start; gap: 15px; padding: 15px 10px; box-sizing: border-box;
-            height: 100vh; overflow-y: auto;
+            width: 20%;
+            background: #222;
+            border-left: 3px solid #444;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 15px;
+            padding: 15px 10px;
+            box-sizing: border-box;
+            height: 100vh;
+            overflow-y: auto;
         }
-        @font-face {
-            font-family: 'UTM HELVETINS';
-            src: url('UTM HELVETINS_3.TTF') format('truetype');
-        }
+
         #scoreContainer {
             display: flex;
             justify-content: center;
-            /* Giữ khoảng cách gap lớn để bù trừ không gian vật lý khi scale(5) */
             gap: 160px;
             margin: 80px auto 90px auto;
             max-width: 1400px;
@@ -40,45 +62,57 @@
             z-index: 10;
         }
 
+        @font-face {
+            font-family: 'SVN-Gilroy';
+            src: url('SVN-Gilroy Black.otf') format('opentype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
         .score-box {
             display: inline-flex;
-            align-items: flex-end;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
             text-align: center;
             transition: all 0.3s ease;
-            font-family: 'UTM HELVETINS', Arial, sans-serif;
-
-            /* Cố định kích thước khung chữ gốc siêu nhỏ để khi scale(5) lên ảnh không bị biến dạng */
+            font-family: 'SVN-Gilroy', sans-serif;
             width: 60px;
-            /* Khi nhân 5 sẽ tương đương rộng 300px trên màn hình */
             height: 20px;
-            /* Khi nhân 5 sẽ tương đương cao 100px trên màn hình */
-
-            /* Ép ảnh vừa khít theo tỷ lệ khung, không dùng contain tự co giãn nữa nhằm tránh bị phình bự */
             background-repeat: no-repeat;
             background-position: center;
             background-size: 100% 100%;
-
-            /* Bỏ padding px lớn cũ để tránh làm tăng kích thước div khi chữ dài ra */
-            padding: 0 4px 2.5px 4px;
+            padding: 2px 4px;
             box-sizing: border-box;
-
-            /* Font size gốc */
-            font-size: 8px;
             white-space: nowrap;
-            /* Không cho phép xuống dòng khi chuỗi số dài */
-
-            /* Thực hiện scale(5) giữ nguyên phông dáng */
             transform: scale(5);
             transform-origin: center;
-
-            /* Giảm bớt margin ngoài vì gap và width/height ở trên đã đủ căn khoảng cách */
             margin-top: 10px;
             margin-left: 70px;
             margin-right: 70px;
         }
 
-        /* Giữ nguyên phần map ảnh nền */
+        .score-box .player-name-label {
+            font-size: 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            line-height: 1.3;
+            margin-bottom: 0.2px;
+            display: block;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transform: translateY(1.2px);
+        }
+
+        .score-box .player-score-val {
+            font-size: 7px;
+            font-weight: bold;
+            line-height: 1;
+            display: block;
+            margin-bottom: -1px;
+        }
+
         .score-red {
             background-image: url("scorered.png") !important;
             color: #ffffff !important;
@@ -104,20 +138,45 @@
             border: none !important;
         }
 
-        #board {
-            position: relative; margin-top: 20px; transform: scale(0.9); transform-origin: top center;
-            background: url("khungbang.png") center center no-repeat; background-size: 100% 100%;
+        #scoreContainer.score-hidden {
+            display: none !important;
         }
-        
-        .status-box {
-            width: 100%; padding: 12px 10px; font-size: 16px; text-align: center;
-            border-radius: 8px; background: purple; color: #fff; box-sizing: border-box;
-        }
-        .status-p1-active { background-color: #FF0000 !important; color: #ffffff !important; }
-        .status-p2-active { background-color: #FFFF00 !important; color: #000000 !important; }
-        .status-p3-active { background-color: #0000FF !important; color: #ffffff !important; }
 
-        /* Khối hiển thị thông tin điểm chi tiết 3 người chơi bên phải */
+        #board {
+            position: relative;
+            margin-top: 20px;
+            transform: scale(0.9);
+            transform-origin: top center;
+            background: url("khungbang.png") center center no-repeat;
+            background-size: 100% 100%;
+        }
+
+        .status-box {
+            width: 100%;
+            padding: 12px 10px;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 8px;
+            background: purple;
+            color: #fff;
+            box-sizing: border-box;
+        }
+
+        .status-p1-active {
+            background-color: #FF0000 !important;
+            color: #ffffff !important;
+        }
+
+        .status-p2-active {
+            background-color: #FFFF00 !important;
+            color: #000000 !important;
+        }
+
+        .status-p3-active {
+            background-color: #0000FF !important;
+            color: #ffffff !important;
+        }
+
         .host-player-row {
             width: 100%;
             background: #2a2a2a;
@@ -126,18 +185,31 @@
             box-sizing: border-box;
             border: 1px solid #444;
         }
-        .p1-row { border-left: 5px solid #ff0000; }
-        .p2-row { border-left: 5px solid #ffff00; }
-        .p3-row { border-left: 5px solid #0000ff; }
+
+        .p1-row {
+            border-left: 5px solid #ff0000;
+        }
+
+        .p2-row {
+            border-left: 5px solid #ffff00;
+        }
+
+        .p3-row {
+            border-left: 5px solid #0000ff;
+        }
 
         .player-row-title {
-            font-size: 13px; margin-bottom: 5px; text-align: center;
+            font-size: 13px;
+            margin-bottom: 5px;
+            text-align: center;
         }
+
         .score-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 5px;
         }
+
         .score-sub-box {
             background: white;
             padding: 6px 2px;
@@ -145,23 +217,34 @@
             text-align: center;
             border-radius: 4px;
         }
-        .lbl-v { color: black; }
-        .lbl-t { color: black; }
 
-        /* Bàn phím chữ cái cho Host */
+        .lbl-v {
+            color: black;
+        }
+
+        .lbl-t {
+            color: black;
+        }
+
         .alphabet-host-section {
             width: 100%;
             margin-top: 5px;
         }
+
         .alphabet-title {
-            font-size: 14px; color: aqua; margin-bottom: 8px; text-align: center;
+            font-size: 14px;
+            color: aqua;
+            margin-bottom: 8px;
+            text-align: center;
         }
+
         .alphabet-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
             gap: 4px;
             justify-content: center;
         }
+
         .btn-letter-host {
             background-color: purple;
             color: #fff;
@@ -170,14 +253,16 @@
             border: none;
             border-radius: 4px;
             text-align: center;
+            cursor: pointer;
         }
+
         .btn-letter-host:disabled {
             background-color: #444 !important;
             color: #888 !important;
             text-decoration: line-through;
+            cursor: not-allowed;
         }
 
-        /* Vùng hiển thị số ô và vị trí từ Control gửi về */
         .info-sync-panel {
             width: 100%;
             background: #333;
@@ -188,19 +273,38 @@
             color: #fff;
             border: 1px dashed #5ac8fa;
         }
+
         .info-sync-line {
-            display: flex; justify-content: space-between; margin-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
         }
-        .info-sync-line:last-child { margin-bottom: 0; }
-        .val-sync { color: #ffff00; }
+
+        .info-sync-line:last-child {
+            margin-bottom: 0;
+        }
+
+        .val-sync {
+            color: #ffff00;
+        }
     </style>
 </head>
+
 <body>
     <div id="leftContainer">
         <div id="scoreContainer">
-            <div id="scoreBox1" class="score-box score-red">0</div>
-            <div id="scoreBox2" class="score-box score-yellow">0</div>
-            <div id="scoreBox3" class="score-box score-blue">0</div>
+            <div id="scoreBox1" class="score-box score-red">
+                <span id="p1NameLabel" class="player-name-label">PLAYER 1</span>
+                <span id="p1ScoreVal" class="player-score-val">0</span>
+            </div>
+            <div id="scoreBox2" class="score-box score-yellow">
+                <span id="p2NameLabel" class="player-name-label">PLAYER 2</span>
+                <span id="p2ScoreVal" class="player-score-val">0</span>
+            </div>
+            <div id="scoreBox3" class="score-box score-blue">
+                <span id="p3NameLabel" class="player-name-label">PLAYER 3</span>
+                <span id="p3ScoreVal" class="player-score-val">0</span>
+            </div>
         </div>
         <div id="board"></div>
     </div>
@@ -209,6 +313,8 @@
         <div id="statusBox1" class="status-box">PLAYER 1</div>
         <div id="statusBox2" class="status-box">PLAYER 2</div>
         <div id="statusBox3" class="status-box">PLAYER 3</div>
+
+        <div style="color: aqua; font-size: 16px; font-weight: bold; text-align: center; margin-top: 10px; border: 1px solid aqua; padding: 10px; border-radius: 6px;">THỜI GIAN CÒN LẠI: <span id="specialTimerDisplay">45</span> S</div>
 
         <div class="host-player-row p1-row">
             <div class="player-row-title" style="color: #ff0000;">NGƯỜI CHƠI 1</div>
@@ -252,15 +358,83 @@
     </div>
 
     <script>
-        const MY_PLAYER_ID = undefined; 
+        const MY_PLAYER_ID = undefined;
+
+        // Đăng ký callback đồng bộ trạng thái host
+        window.crosswordCallbacks = window.crosswordCallbacks || [];
+        window.crosswordCallbacks.push((state) => {
+            console.log("Host nhận callback đồng bộ trạng thái:", state);
+
+            resetHostAlphabetButtons();
+            if (state.guessedLetters && Array.isArray(state.guessedLetters)) {
+                state.guessedLetters.forEach(letter => {
+                    const cleanLetter = letter.trim().toUpperCase();
+                    const targetBtn = document.getElementById(`host-char-${cleanLetter}`);
+                    if (targetBtn) {
+                        targetBtn.disabled = true;
+                    }
+                });
+            }
+
+            if (state.revealedPositions && Array.isArray(state.revealedPositions)) {
+                const syncNumCells = document.getElementById("syncNumCells");
+                const syncPositions = document.getElementById("syncPositions");
+                if (syncNumCells) syncNumCells.textContent = state.revealedPositions.length;
+                if (syncPositions) syncPositions.textContent = state.revealedPositions.length > 0 ? state.revealedPositions.join("; ") : "Không có";
+            }
+
+            if (state.scoresData) {
+                const scoreContainer = document.getElementById('scoreContainer');
+                if (scoreContainer) {
+                    if (state.isScoreVisible === false) {
+                        scoreContainer.classList.add('score-hidden');
+                    } else {
+                        scoreContainer.classList.remove('score-hidden');
+                    }
+                }
+
+                const playerMapping = [
+                    { player: state.scoresData.p1, nameId: 'p1NameLabel', scoreId: 'p1ScoreVal', boxId: 'scoreBox1', defaultColor: 'score-red', hostRoundId: 'p1HostRound', hostTotalId: 'p1HostTotal' },
+                    { player: state.scoresData.p2, nameId: 'p2NameLabel', scoreId: 'p2ScoreVal', boxId: 'scoreBox2', defaultColor: 'score-yellow', hostRoundId: 'p2HostRound', hostTotalId: 'p2HostTotal' },
+                    { player: state.scoresData.p3, nameId: 'p3NameLabel', scoreId: 'p3ScoreVal', boxId: 'scoreBox3', defaultColor: 'score-blue', hostRoundId: 'p3HostRound', hostTotalId: 'p3HostTotal' }
+                ];
+
+                playerMapping.forEach((item) => {
+                    const player = item.player;
+                    if (!player) return;
+
+                    if (document.getElementById(item.hostRoundId)) {
+                        document.getElementById(item.hostRoundId).textContent = formatNumberWithDots(player.round);
+                    }
+                    if (document.getElementById(item.hostTotalId)) {
+                        document.getElementById(item.hostTotalId).textContent = formatNumberWithDots(player.total);
+                    }
+
+                    const nameLabel = document.getElementById(item.nameId);
+                    if (nameLabel) nameLabel.textContent = player.name || "PLAYER";
+
+                    let scoreVal = (player.mode === 'ROUND') ? player.round : player.total;
+                    const scoreLabel = document.getElementById(item.scoreId);
+                    if (scoreLabel) scoreLabel.textContent = formatNumberWithDots(scoreVal);
+
+                    const box = document.getElementById(item.boxId);
+                    if (box) {
+                        if (player.light === 'BLACK') {
+                            box.className = 'score-box score-black';
+                        } else {
+                            box.className = `score-box ${item.defaultColor}`;
+                        }
+                    }
+                });
+            }
+        });
     </script>
     <script src="script.js"></script>
 
     <script>
-        // Khởi tạo giao diện bảng chữ cái Tiếng Việt cho Host
         const vietnameseLetters = ["A", "Ă", "Â", "B", "C", "D", "Đ", "E", "Ê", "G", "H", "I", "K", "L", "M", "N", "O", "Ô", "Ơ", "P", "Q", "R", "S", "T", "U", "Ư", "V", "X", "Y"];
         const alphabetContainer = document.getElementById("hostAlphabetContainer");
-        
+
         vietnameseLetters.forEach(letter => {
             const btn = document.createElement("button");
             btn.className = "btn-letter-host";
@@ -269,44 +443,93 @@
             alphabetContainer.appendChild(btn);
         });
 
-        // Hàm định dạng số có dấu chấm phân tách hàng nghìn (giống bên Control)
         function formatNumberWithDots(num) {
             if (num === undefined || num === null) return "0";
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
 
-        // ĐỒNG BỘ ĐIỂM SỐ CHÍNH XÁC TỪ REALTIME BROADCAST CHANNEL CỦA SUPABASE
-        // Ghi đè hoặc bổ sung cơ chế lắng nghe sự kiện từ script.js công khai
+        function resetHostAlphabetButtons() {
+            vietnameseLetters.forEach(letter => {
+                const btn = document.getElementById(`host-char-${letter}`);
+                if (btn) btn.disabled = false;
+            });
+        }
+
         if (window.supabaseClient) {
             const hostChannel = window.supabaseClient.channel('crossword_broadcast_room', {
                 config: { broadcast: { ack: false, self: false } }
             });
-            
+
             hostChannel.on('broadcast', { event: 'control-to-display' }, ({ payload }) => {
                 const { type, data } = payload;
+
                 if (type === "SYNC_SCORES" && data) {
-                    // Đồng bộ người chơi 1
-                    if (data.p1) {
-                        document.getElementById("p1HostRound").textContent = formatNumberWithDots(data.p1.round);
-                        document.getElementById("p1HostTotal").textContent = formatNumberWithDots(data.p1.total);
+                    const { scoresData, scoreVisible } = data;
+
+                    const container = document.getElementById('scoreContainer');
+                    if (container) {
+                        if (scoreVisible === false) {
+                            container.classList.add('score-hidden');
+                        } else {
+                            container.classList.remove('score-hidden');
+                        }
                     }
-                    // Đồng bộ người chơi 2
-                    if (data.p2) {
-                        document.getElementById("p2HostRound").textContent = formatNumberWithDots(data.p2.round);
-                        document.getElementById("p2HostTotal").textContent = formatNumberWithDots(data.p2.total);
+
+                    if (!scoresData) return;
+
+                    const playerMapping = [
+                        { boxId: 'scoreBox1', player: scoresData.p1, defaultColor: 'score-red', nameId: 'p1NameLabel', scoreId: 'p1ScoreVal', hostRoundId: 'p1HostRound', hostTotalId: 'p1HostTotal' },
+                        { boxId: 'scoreBox2', player: scoresData.p2, defaultColor: 'score-yellow', nameId: 'p2NameLabel', scoreId: 'p2ScoreVal', hostRoundId: 'p2HostRound', hostTotalId: 'p2HostTotal' },
+                        { boxId: 'scoreBox3', player: scoresData.p3, defaultColor: 'score-blue', nameId: 'p3NameLabel', scoreId: 'p3ScoreVal', hostRoundId: 'p3HostRound', hostTotalId: 'p3HostTotal' }
+                    ];
+
+                    playerMapping.forEach((item) => {
+                        const box = document.getElementById(item.boxId);
+                        const player = item.player;
+                        if (!player) return;
+
+                        if (document.getElementById(item.hostRoundId)) {
+                            document.getElementById(item.hostRoundId).textContent = formatNumberWithDots(player.round);
+                        }
+                        if (document.getElementById(item.hostTotalId)) {
+                            document.getElementById(item.hostTotalId).textContent = formatNumberWithDots(player.total);
+                        }
+
+                        if (box) {
+                            const nameLabel = document.getElementById(item.nameId);
+                            if (nameLabel) nameLabel.textContent = player.name || "PLAYER";
+
+                            let scoreVal = (player.mode === 'ROUND') ? player.round : player.total;
+                            const scoreLabel = document.getElementById(item.scoreId);
+                            if (scoreLabel) scoreLabel.textContent = formatNumberWithDots(scoreVal);
+
+                            if (player.light === 'BLACK') {
+                                box.className = 'score-box score-black';
+                            } else {
+                                box.className = `score-box ${item.defaultColor}`;
+                            }
+                        }
+                    });
+                }
+
+                if (type === "GUESS_LETTER" && typeof data === "string") {
+                    const cleanLetter = data.trim().toUpperCase();
+                    const targetBtn = document.getElementById(`host-char-${cleanLetter}`);
+                    if (targetBtn) {
+                        targetBtn.disabled = true;
                     }
-                    // Đồng bộ người chơi 3
-                    if (data.p3) {
-                        document.getElementById("p3HostRound").textContent = formatNumberWithDots(data.p3.round);
-                        document.getElementById("p3HostTotal").textContent = formatNumberWithDots(data.p3.total);
-                    }
+                }
+
+                if (type === "RESET_HOST_ALPHABET" || type === "LOAD_QUIZ") {
+                    resetHostAlphabetButtons();
+                    document.getElementById("syncNumCells").textContent = "0";
+                    document.getElementById("syncPositions").textContent = "---";
                 }
             }).subscribe();
         }
 
-        // BẮT CHẶN HÀM PHẢN HỒI GỐC CỦA SCRIPT.JS ĐỂ ĐỒNG BỘ HIỂN THỊ SỐ Ô VÀ VỊ TRÍ MỞ CHỮ TỨC THÌ
         const originalSyncControlUI = window.syncControlUI;
-        window.syncControlUI = function(type, data) {
+        window.syncControlUI = function (type, data) {
             if (typeof originalSyncControlUI === 'function') {
                 originalSyncControlUI(type, data);
             }
@@ -316,41 +539,7 @@
                 document.getElementById("syncPositions").textContent = data.length > 0 ? data.join("; ") : "Không có";
             }
         };
-
-        // GIÁM SÁT THAY ĐỔI TRÊN BÀN CỜ ĐỂ ẨN CHỮ CÁI VÀ RESET BÀN PHÍM TỰ ĐỘNG
-        let lastWordLength = 0;
-        const boardObserver = new MutationObserver(() => {
-            const cells = document.querySelectorAll("#board .cell");
-            
-            if (cells.length !== lastWordLength) {
-                lastWordLength = cells.length;
-                vietnameseLetters.forEach(letter => {
-                    const btn = document.getElementById(`host-char-${letter}`);
-                    if (btn) btn.disabled = false;
-                });
-                document.getElementById("syncNumCells").textContent = "0";
-                document.getElementById("syncPositions").textContent = "---";
-            }
-
-            cells.forEach(cell => {
-                const bg = window.getComputedStyle(cell).backgroundImage;
-                if (bg && !bg.includes("defaultbox.png") && cell.textContent.trim() !== "") {
-                    let text = cell.textContent.trim().toUpperCase();
-                    let cleanedText = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-                    const targetBtn = document.getElementById(`host-char-${cleanedText}`);
-                    if (targetBtn) {
-                        targetBtn.disabled = true;
-                    }
-                }
-            });
-        });
-
-        const boardEl = document.getElementById("board");
-        if (boardEl) {
-            boardObserver.observe(boardEl, { childList: true, subtree: true, attributes: true });
-        }
-
-        
     </script>
 </body>
+
 </html>
